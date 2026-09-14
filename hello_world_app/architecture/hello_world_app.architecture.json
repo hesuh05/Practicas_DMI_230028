@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura de hello_world_app",
+    "output": "hello_world_app-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/hesuh05/Practicas_DMI_230028.git",
+      "revision": "97f00519897862dac2c05b28fc009c7fc72e4e1e"
+    },
+    "views": [
+      {
+        "id": "inicio",
+        "label": "Arranque de la app",
+        "focus": ["usuario", "flutter", "main", "myapp", "counter"],
+        "note": "Del inicio de Flutter a la pantalla inicial."
+      },
+      {
+        "id": "contador",
+        "label": "Flujo del contador",
+        "focus": ["counter", "estado", "botones"],
+        "note": "Acciones locales que actualizan y representan el contador."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "usuario",
+      "type": "external",
+      "label": "Usuario",
+      "sublabel": "Toca los controles",
+      "pos": [50, 265],
+      "size": [135, 64]
+    },
+    {
+      "id": "flutter",
+      "type": "frontend",
+      "label": "Flutter Runtime",
+      "sublabel": "Material 3 · Roboto",
+      "pos": [260, 265],
+      "size": [155, 64],
+      "sources": [{ "path": "hello_world_app/pubspec.yaml", "line": 21, "label": "dependencias y fuentes" }]
+    },
+    {
+      "id": "main",
+      "type": "frontend",
+      "label": "main()",
+      "sublabel": "runApp(const MyApp())",
+      "pos": [490, 265],
+      "size": [150, 64],
+      "sources": [{ "path": "hello_world_app/lib/main.dart", "line": 4, "end_line": 6, "label": "punto de entrada" }]
+    },
+    {
+      "id": "myapp",
+      "type": "frontend",
+      "label": "MyApp",
+      "sublabel": "MaterialApp y tema global",
+      "pos": [715, 265],
+      "size": [170, 64],
+      "sources": [{ "path": "hello_world_app/lib/main.dart", "line": 8, "end_line": 23, "label": "raíz de interfaz" }]
+    },
+    {
+      "id": "counter",
+      "type": "frontend",
+      "label": "CounterFunctionsScreen",
+      "sublabel": "Scaffold · AppBar · indicador",
+      "pos": [960, 265],
+      "size": [195, 64],
+      "sources": [{ "path": "hello_world_app/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 3, "end_line": 62, "label": "pantalla del contador" }]
+    },
+    {
+      "id": "estado",
+      "type": "frontend",
+      "label": "Estado local",
+      "sublabel": "clickcounter · setState()",
+      "pos": [960, 105],
+      "size": [175, 64],
+      "sources": [{ "path": "hello_world_app/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 8, "end_line": 46, "label": "estado y renderizado" }]
+    },
+    {
+      "id": "botones",
+      "type": "frontend",
+      "label": "Botones de acción",
+      "sublabel": "reiniciar · +1 · −1",
+      "pos": [960, 425],
+      "size": [175, 64],
+      "sources": [{ "path": "hello_world_app/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 48, "end_line": 75, "label": "botones de acción" }]
+    }
+  ],
+  "connections": [
+    { "id": "user-runtime", "from": "usuario", "to": "flutter", "label": "interacción táctil", "variant": "emphasis", "labelDy": 56 },
+    { "id": "runtime-main", "from": "flutter", "to": "main", "label": "inicia" },
+    { "id": "main-app", "from": "main", "to": "myapp", "label": "runApp" },
+    { "id": "app-screen", "from": "myapp", "to": "counter", "label": "home" },
+    { "id": "screen-state", "from": "counter", "to": "estado", "label": "lee y representa", "fromSide": "top", "toSide": "bottom" },
+    { "id": "screen-buttons", "from": "counter", "to": "botones", "label": "compone controles", "fromSide": "bottom", "toSide": "top" },
+    { "id": "button-state", "from": "botones", "to": "estado", "label": "setState: 0 / +1 / −1", "variant": "emphasis", "fromSide": "right", "toSide": "right", "via": [[1200, 457], [1200, 137]], "labelAt": [1265, 300] }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Interfaz",
+      "items": ["Flutter con Material 3", "Tema teal y tipografía Roboto", "Una pantalla inicial: CounterFunctionsScreen"]
+    },
+    {
+      "dot": "emerald",
+      "title": "Estado",
+      "items": ["clickcounter vive dentro del State de la pantalla", "setState vuelve a renderizar el indicador", "El color cambia para valores negativos, cero y positivos"]
+    },
+    {
+      "dot": "slate",
+      "title": "Alcance actual",
+      "items": ["No se observan API, base de datos ni almacenamiento remoto", "La app contiene adaptadores Android, iOS, web, Windows, macOS y Linux generados por Flutter"]
+    }
+  ]
+}
