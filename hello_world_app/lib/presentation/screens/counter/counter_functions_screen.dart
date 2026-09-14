@@ -32,11 +32,11 @@ class _CounterScreenState extends State<CounterFunctionsScreen> {
           children: [
             Text(
               '$clickcounter',
-              style: TextStyle(fontSize: 160, fontWeight: FontWeight.w100, color: Colors.black),
+              style: TextStyle(fontSize: 160, fontWeight: FontWeight.w100, color: clickcounter<0?Colors.red:clickcounter>0?Colors.green:Colors.blue),
             ),
             Text(
               "Click${clickcounter != 1 ? 's' : ''}",
-              style: TextStyle(fontSize: 25),
+              style: TextStyle(fontSize: 25, fontFamily: 'Roboto'),
             ),
             FloatingActionButton(
               onPressed: () {

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_world_app/presentation/screens/counter/counter_functions_screen.dart';
 
@@ -15,7 +14,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: Colors.teal
+        colorSchemeSeed: Colors.teal,
+        fontFamily: 'Roboto',
       ),
       home: const CounterFunctionsScreen()
     ); 
