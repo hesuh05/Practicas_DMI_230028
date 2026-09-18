@@ -13,7 +13,7 @@ class MyMessageBubble extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: colors.primary,
             borderRadius: BorderRadius.circular(20)
           ),
           child: const Padding(
