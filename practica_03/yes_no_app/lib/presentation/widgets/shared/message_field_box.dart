@@ -9,7 +9,7 @@ class MessageFieldBox extends StatelessWidget {
     final textController = TextEditingController();
     final focusNode = FocusNode();
 
-    final outlineInputBorder = UnderlineInputBorder(
+    final outlineInputBorder = OutlineInputBorder(
       borderSide: const BorderSide(color: Colors.transparent),
       borderRadius: BorderRadius.circular(40)
     );
@@ -18,6 +18,7 @@ class MessageFieldBox extends StatelessWidget {
         hintText: 'End your message with a "?"',
         enabledBorder: outlineInputBorder,
         focusedBorder: outlineInputBorder,
+        
         filled: true,
         suffixIcon: IconButton(
           onPressed: (){
