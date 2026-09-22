@@ -52,4 +52,4 @@ Al presionar el botón de incremento cinco veces, el contador cambia a `5`, se m
 
 ## Liga
 
-[Arquitectura](https://hesuh05.github.io/Practicas_DMI_230028/hello_world_app/architecture/hello_world_app-architecture.html)
+[Arquitectura](https://hesuh05.github.io/Practicas_DMI_230028/practica_02/hello_world_app/architecture/hello_world_app-architecture.html)
