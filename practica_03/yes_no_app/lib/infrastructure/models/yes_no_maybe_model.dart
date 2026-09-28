@@ -29,7 +29,7 @@ class YesNoMaybeModel {
     return Message(
       text: answer, 
       fromWho: FromWho.destiny, 
-      time: "${time.hour}: ${time.minute}",
+      time: formatMessageTime(time),
       date: "${time.day}/${time.month}/${time.year}",
       imageUrl: image);
   }
