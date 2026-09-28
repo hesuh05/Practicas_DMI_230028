@@ -8,16 +8,16 @@ class ChatProvider extends ChangeNotifier {
   final GetYesNoMaybeAnswer getYesNoMaybeAnswer = GetYesNoMaybeAnswer();
 
   List<Message> messageList = [
-    Message(text: "What's up!", fromWho: FromWho.origin, time: "16:39"),
-    Message(text: "sup 👍", fromWho: FromWho.destiny, time: "16:42"),
-    Message(text: "You're near?", fromWho: FromWho.destiny, time: "16:45")
+    Message(text: "What's up!", fromWho: FromWho.origin, time: "16:39", date: "15/09/2026"),
+    Message(text: "sup 👍", fromWho: FromWho.destiny, time: "16:42", date: "15/09/2026"),
+    Message(text: "You're near?", fromWho: FromWho.destiny, time: "16:45", date:"15/09/2026")
   ];
 
   Future<void> sendMessage(String text) async {
     if ( text.isEmpty ) return;
 
     DateTime time = DateTime.now();
-    final newMessage = Message(text: text, fromWho: FromWho.origin, time: "${time.hour}:${time.minute}");
+    final newMessage = Message(text: text, fromWho: FromWho.origin, time: "${time.hour}:${time.minute}", date: "${time.day}/${time.month}/${time.year}");
     messageList.add(newMessage);
 
     if (text.endsWith("?")) {

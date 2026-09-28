@@ -8,11 +8,13 @@ class Message {
   final String? imageUrl;
   final FromWho fromWho;
   final String time;
+  final String date;
 
   Message({
     required this.text, 
     this.imageUrl, 
     required this.fromWho,
-    required this.time
+    required this.time,
+    required this.date
   });
 }
