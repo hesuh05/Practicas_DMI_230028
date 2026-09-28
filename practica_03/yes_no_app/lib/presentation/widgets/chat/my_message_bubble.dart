@@ -26,7 +26,7 @@ class MyMessageBubble extends StatelessWidget {
           ),
         ),
         Text(message.time, style: TextStyle(color: Color.fromARGB(243, 239, 239, 239)),),
-        const SizedBox(height: 10,)
+        const SizedBox(height: 5,)
       ],
     );
   }
