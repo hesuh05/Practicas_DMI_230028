@@ -27,8 +27,8 @@ class HerMessageBubble extends StatelessWidget {
         ),
         const SizedBox(height: 5,),
         Text(message.time, style: TextStyle(color: Color.fromARGB(243, 239, 239, 239)),),
-        // _ImageBubble(),
-        const SizedBox(height: 10,)
+        _ImageBubble(imageUrl: message.imageUrl ?? 'https://media1.tenor.com/m/yZXjvQffRWEAAAAC/the-office-no.gif',),
+        const SizedBox(height: 10,), 
         // Todo: Image
       ],
     );
@@ -36,15 +36,17 @@ class HerMessageBubble extends StatelessWidget {
 }
 
 class _ImageBubble extends StatelessWidget {
-  
+  final String imageUrl;
+
+  _ImageBubble({super.key, required this.imageUrl});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.network(
-        //'https://yesno.wtf/assets/no/7-331da2464250a1459cd7d41715e1f67d.gif',
-        'https://media1.tenor.com/m/yZXjvQffRWEAAAAC/the-office-no.gif',
+        imageUrl,
         height: 150, 
         width: size.width * 0.7,
         fit: BoxFit.cover,
