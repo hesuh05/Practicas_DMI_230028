@@ -25,11 +25,13 @@ class HerMessageBubble extends StatelessWidget {
             child: Text(message.text, style: TextStyle(color: Colors.white),),
           ),
         ),
+        if (message.imageUrl != null) ...[
+          const SizedBox(height: 5,),
+          _ImageBubble(imageUrl: message.imageUrl!),
+        ],
         const SizedBox(height: 5,),
         Text(message.time, style: TextStyle(color: Color.fromARGB(243, 239, 239, 239)),),
-        _ImageBubble(imageUrl: message.imageUrl ?? 'https://media1.tenor.com/m/yZXjvQffRWEAAAAC/the-office-no.gif',),
         const SizedBox(height: 10,), 
-        // Todo: Image
       ],
     );
   }
