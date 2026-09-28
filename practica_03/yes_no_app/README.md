@@ -30,9 +30,37 @@ La aplicación presenta una pantalla de conversación en la que el usuario puede
 
 La pantalla principal muestra el encabezado del chat, las burbujas de conversación y el campo para escribir una pregunta.
 
-![Vista general del chat](images/chat_first_view.png)
-![Respuestas Yes y No](images/no_yes_reply.png)
-![Respuesta Maybe](images/maybe_reply.png)
+## Capturas de pantalla
+
+<div align="center">
+
+### Vista inicial
+
+<img src="images/chat_first_view.png" alt="Vista inicial del chat" width="250" height="600">
+
+**Vista inicial del chat**  
+Pantalla principal de la aplicación donde el usuario puede realizar una pregunta y comenzar una conversación.
+
+<br>
+
+### Respuesta Sí/No
+
+<img src="images/no_yes_reply.png" alt="Respuesta Sí o No" width="250" height="600">
+
+**Respuesta Sí/No**  
+La aplicación muestra una respuesta afirmativa o negativa a la pregunta realizada por el usuario.
+
+<br>
+
+### Respuesta Tal vez
+
+<img src="images/maybe_reply.png" alt="Respuesta Tal vez" width="250" height="600">
+
+**Respuesta Tal vez**  
+La aplicación muestra una respuesta de incertidumbre cuando la opción seleccionada corresponde a **"Tal vez"**.
+
+</div>
+
 
 ## Liga
 
