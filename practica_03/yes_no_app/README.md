@@ -30,7 +30,9 @@ La aplicación presenta una pantalla de conversación en la que el usuario puede
 
 La pantalla principal muestra el encabezado del chat, las burbujas de conversación y el campo para escribir una pregunta.
 
-![Vista general del chat](images/chat_general_view.png)
+![Vista general del chat](images/chat_first_view.png)
+![Respuestas Yes y No](images/no_yes_reply.png)
+![Respuesta Maybe](images/maybe_reply.png)
 
 ## Liga
 
