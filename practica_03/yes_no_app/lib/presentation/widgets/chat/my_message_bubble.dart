@@ -4,8 +4,10 @@ import 'package:yes_no_app/domain/entities/messages.dart';
 class MyMessageBubble extends StatelessWidget {
 
   final Message message;
+  final String header;
+  final bool showHeader;
 
-  const MyMessageBubble({super.key, required this.message});
+  const MyMessageBubble({super.key, required this.message, required this.header, required this.showHeader});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +17,7 @@ class MyMessageBubble extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        showHeader?Text(header):SizedBox(height: 0,),
         Container(
           decoration: BoxDecoration(
             color: colors.primary,

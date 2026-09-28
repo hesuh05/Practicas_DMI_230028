@@ -27,9 +27,10 @@ class YesNoMaybeModel {
   Message toMessageEntity() {
     DateTime time = DateTime.now();
     return Message(
-    text: answer, 
-    fromWho: FromWho.destiny, 
-    time: "${time.hour}: ${time.minute}",
-    imageUrl: image);
+      text: answer, 
+      fromWho: FromWho.destiny, 
+      time: "${time.hour}: ${time.minute}",
+      date: "${time.day}/${time.month}/${time.year}",
+      imageUrl: image);
   }
 }

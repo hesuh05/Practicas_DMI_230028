@@ -32,7 +32,8 @@ class _ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final chatProvider = context.watch<ChatProvider>();
-
+    DateTime time = DateTime.now();
+    String lastDate = "${time.day}/${time.month}/${time.year}";
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -43,9 +44,13 @@ class _ChatView extends StatelessWidget {
               controller: chatProvider.chatScrollController,
               itemBuilder: (context, index) {
                 final message = chatProvider.messageList[index];
+                bool newSection = lastDate!=message.date;
+                DateTime time = DateTime.now();
+                String sectionTitle = message.date==lastDate?"Today":lastDate;
+                lastDate = message.date; 
                 return message.fromWho==FromWho.origin
-                ? MyMessageBubble(message: message)
-                : HerMessageBubble(message: message);
+                ? MyMessageBubble(message: message, header: sectionTitle, showHeader: newSection)
+                : HerMessageBubble(message: message, header: sectionTitle, showHeader: newSection);
               },
             )),
             // Caja de Texto

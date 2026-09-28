@@ -4,8 +4,10 @@ import 'package:yes_no_app/domain/entities/messages.dart';
 class HerMessageBubble extends StatelessWidget {
 
   final Message message;
+  final String header;
+  final bool showHeader;
 
-  const HerMessageBubble({super.key, required this.message});
+  const HerMessageBubble({super.key, required this.message, required this.header, required this.showHeader});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +17,7 @@ class HerMessageBubble extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        showHeader?Text(header,style: TextStyle(backgroundColor: colors.primary)):SizedBox(height: 0,),
         Container(
           decoration: BoxDecoration(
             color: colors.secondary,
