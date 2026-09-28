@@ -17,7 +17,7 @@ class ChatProvider extends ChangeNotifier {
     if ( text.isEmpty ) return;
 
     DateTime time = DateTime.now();
-    final newMessage = Message(text: text, fromWho: FromWho.origin, time: "${time.hour}:${time.minute}", date: "${time.day}/${time.month}/${time.year}");
+    final newMessage = Message(text: text, fromWho: FromWho.origin, time: formatMessageTime(time), date: "${time.day}/${time.month}/${time.year}");
     messageList.add(newMessage);
 
     if (text.endsWith("?")) {

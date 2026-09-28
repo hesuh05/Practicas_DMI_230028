@@ -32,8 +32,6 @@ class _ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final chatProvider = context.watch<ChatProvider>();
-    DateTime time = DateTime.now();
-    String lastDate = "${time.day}/${time.month}/${time.year}";
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -44,13 +42,19 @@ class _ChatView extends StatelessWidget {
               controller: chatProvider.chatScrollController,
               itemBuilder: (context, index) {
                 final message = chatProvider.messageList[index];
-                bool newSection = lastDate!=message.date;
-                DateTime time = DateTime.now();
-                String sectionTitle = message.date==lastDate?"Today":lastDate;
-                lastDate = message.date; 
-                return message.fromWho==FromWho.origin
-                ? MyMessageBubble(message: message, header: sectionTitle, showHeader: newSection)
-                : HerMessageBubble(message: message, header: sectionTitle, showHeader: newSection);
+                final newSection = index == 0 ||
+                  chatProvider.messageList[index - 1].date != message.date;
+                final bubble = message.fromWho == FromWho.origin
+                    ? MyMessageBubble(message: message)
+                    : HerMessageBubble(message: message);
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (newSection) _DateDivider(date: message.date),
+                    bubble,
+                  ],
+                );
               },
             )),
             // Caja de Texto
@@ -58,6 +62,40 @@ class _ChatView extends StatelessWidget {
               onValue: (value) => chatProvider.sendMessage(value)
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DateDivider extends StatelessWidget {
+  final String date;
+
+  const _DateDivider({required this.date});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Align(
+        alignment: Alignment.center,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: Text(
+              isToday(date) ? 'Today' : date,
+              style: TextStyle(
+                color: colors.onSurfaceVariant,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ),
       ),
     );
