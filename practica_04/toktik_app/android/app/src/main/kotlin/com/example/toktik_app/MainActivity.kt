@@ -2,6 +2,9 @@ package com.example.toktik
 
 import android.media.MediaExtractor
 import android.media.MediaFormat
+import android.content.ComponentName
+import android.content.pm.PackageManager
+import java.util.Calendar
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -9,6 +12,43 @@ import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
     private val executor = Executors.newSingleThreadExecutor()
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        updateSeasonalLauncherIcon()
+        super.onCreate(savedInstanceState)
+    }
+
+    private fun updateSeasonalLauncherIcon() {
+        val calendar = Calendar.getInstance()
+        val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val alias = when {
+            month == 10 && day >= 30 || month == 11 && day <= 3 ->
+                "MainActivityHalloween"
+            month == 12 && day >= 5 || month == 1 && day <= 5 ->
+                "MainActivityChristmas"
+            month == 2 && day == 14 ->
+                "MainActivityValentines"
+            else -> "MainActivityNormal"
+        }
+        val aliases = listOf(
+            "MainActivityNormal",
+            "MainActivityHalloween",
+            "MainActivityChristmas",
+            "MainActivityValentines",
+        )
+        aliases.forEach { name ->
+            packageManager.setComponentEnabledSetting(
+                ComponentName(this, "$packageName.$name"),
+                if (name == alias) {
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                } else {
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                },
+                PackageManager.DONT_KILL_APP,
+            )
+        }
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

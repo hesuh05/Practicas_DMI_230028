@@ -58,6 +58,14 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - lib/assets/flip_normal.png
+    - lib/assets/flip_halloween.png
+    - lib/assets/flip_christmas.png
+    - lib/assets/flip_san_valentin.png
+    - lib/assets/audio/halloween.mp3
+    - lib/assets/audio/christmas.mp3
+    - lib/assets/audio/valentine.mp3
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
