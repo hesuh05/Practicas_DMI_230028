@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TokTik · Arquitectura final",
+    "subtitle": "Feeds, fuentes, reproducción y preferencias persistentes",
+    "output": "practica_04/toktik_app/architecture/final/architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/hesuh05/Practicas_DMI_230028",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "6139bebc95b75ca25652250d0dcf0501265cb59a"
+    }
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "Persona",
+      "sublabel": "TokTik",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "sections",
+      "type": "frontend",
+      "label": "Video Sections",
+      "sublabel": "Discover · For You · Favorites",
+      "pos": [
+        240,
+        300
+      ],
+      "size": [
+        210,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/presentation/screens/video_sections_screen.dart",
+          "line": 1,
+          "end_line": 40
+        }
+      ]
+    },
+    {
+      "id": "feeds",
+      "type": "backend",
+      "label": "Feed Providers",
+      "sublabel": "paginación · likes",
+      "pos": [
+        550,
+        300
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/presentation/providers/video_feed_provider.dart",
+          "line": 1,
+          "end_line": 94
+        }
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "backend",
+      "label": "Video Repository",
+      "sublabel": "ordena fuentes · fallback",
+      "pos": [
+        550,
+        540
+      ],
+      "size": [
+        220,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/repositories/video_posts_repository_impl.dart",
+          "line": 1,
+          "end_line": 117
+        }
+      ]
+    },
+    {
+      "id": "remote",
+      "type": "cloud",
+      "label": "Fuentes remotas",
+      "sublabel": "Coverr · Pixabay · IA",
+      "pos": [
+        860,
+        540
+      ],
+      "size": [
+        220,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/datasources/coverr_video_datasource.dart",
+          "line": 1,
+          "end_line": 56
+        },
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/datasources/pixabay_video_datasource.dart",
+          "line": 1,
+          "end_line": 57
+        },
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/datasources/internet_archive_video_datasource.dart",
+          "line": 1,
+          "end_line": 123
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "type": "database",
+      "label": "Fuente local",
+      "sublabel": "assets disponibles",
+      "pos": [
+        1160,
+        540
+      ],
+      "size": [
+        220,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/datasources/local_video_datasource_impl.dart",
+          "line": 1,
+          "end_line": 24
+        }
+      ]
+    },
+    {
+      "id": "favorites",
+      "type": "database",
+      "label": "Favoritos",
+      "sublabel": "SharedPreferences",
+      "pos": [
+        770,
+        80
+      ],
+      "size": [
+        220,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/datasources/shared_preferences_video_store.dart",
+          "line": 1,
+          "end_line": 86
+        }
+      ]
+    },
+    {
+      "id": "player",
+      "type": "frontend",
+      "label": "Fullscreen Player",
+      "sublabel": "play · pause · loop · mute",
+      "pos": [
+        850,
+        300
+      ],
+      "size": [
+        220,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/presentation/widgets/video/fullscreen_player.dart",
+          "line": 1,
+          "end_line": 80
+        }
+      ]
+    },
+    {
+      "id": "prefs",
+      "type": "database",
+      "label": "Preferencias",
+      "sublabel": "fuente · temporada",
+      "pos": [
+        240,
+        540
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/presentation/providers/video_source_provider.dart",
+          "line": 1,
+          "end_line": 81
+        },
+        {
+          "path": "practica_04/toktik_app/lib/presentation/providers/season_provider.dart",
+          "line": 1,
+          "end_line": 64
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-sections",
+      "from": "user",
+      "to": "sections",
+      "label": "elige feed"
+    },
+    {
+      "id": "sections-feeds",
+      "from": "sections",
+      "to": "feeds",
+      "label": "carga páginas"
+    },
+    {
+      "id": "feeds-repo",
+      "from": "feeds",
+      "to": "repo",
+      "label": "solicita videos"
+    },
+    {
+      "id": "repo-remote",
+      "from": "repo",
+      "to": "remote",
+      "label": "intenta por orden",
+      "fromSide": "top",
+      "toSide": "left"
+    },
+    {
+      "id": "repo-local",
+      "from": "repo",
+      "to": "local",
+      "label": "fallback local",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "feeds-favorites",
+      "from": "feeds",
+      "to": "favorites",
+      "label": "guarda y consulta likes",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "feeds-prefs",
+      "from": "feeds",
+      "to": "prefs",
+      "label": "usa fuente preferida",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "feeds-player",
+      "from": "feeds",
+      "to": "player",
+      "label": "videos actuales"
+    },
+    {
+      "id": "player-local",
+      "from": "player",
+      "to": "local",
+      "label": "reproduce asset",
+      "fromSide": "top",
+      "toSide": "right"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Feeds",
+      "items": [
+        "Discover y For You cargan páginas; Favorites muestra videos con like.",
+        "El feed solicita más contenido al acercarse al final."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Fuentes",
+      "items": [
+        "Coverr, Pixabay e Internet Archive se prueban según el orden configurado.",
+        "Si una fuente no entrega videos, el repositorio continúa con las siguientes; Local sirve de respaldo."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Reproducción y estado",
+      "items": [
+        "El reproductor admite URL remota y asset, play/pause, loop y mute.",
+        "SharedPreferences conserva favoritos y preferencias de fuente y temporada."
+      ]
+    }
+  ]
+}

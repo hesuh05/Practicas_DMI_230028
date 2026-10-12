@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "6ef18912-55bb-42dd-a639-27388e184e2f",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Chucho\\Downloads\\git\\hesuh05\\Practicas_DMI_230028\\practica_04\\toktik_app\\architecture\\initial\\candidate.json",
+  "output": "C:\\Users\\Chucho\\Downloads\\git\\hesuh05\\Practicas_DMI_230028\\practica_04\\toktik_app\\architecture\\initial\\architecture.html",
+  "specification": {
+    "sha256": "8cc9fbf2260080e44e0fd300e81bba9ef2f3378238c267dd5f1663198aaf002f",
+    "bytes": 4213
+  },
+  "artifact": {
+    "sha256": "4f3deb41c7b39c57d3c32aa624a5445ff0c2921e101eaba1a8012369a4190fc9",
+    "bytes": 756936
+  }
+}
