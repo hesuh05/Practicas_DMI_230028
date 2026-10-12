@@ -8,12 +8,14 @@ class VideoScrollableView extends StatefulWidget {
     super.key,
     required this.videos,
     required this.onLike,
+    required this.onLoadMore,
     this.isVisible = true,
     this.emptyMessage = 'Todavía no hay videos en esta sección.',
   });
 
   final List<VideoPost> videos;
   final Future<void> Function(VideoPost) onLike;
+  final Future<void> Function() onLoadMore;
   final bool isVisible;
   final String emptyMessage;
 
@@ -53,7 +55,12 @@ class _VideoScrollableViewState extends State<VideoScrollableView> {
       itemCount: widget.videos.length,
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
-      onPageChanged: (index) => setState(() => _currentIndex = index),
+      onPageChanged: (index) {
+        setState(() => _currentIndex = index);
+        if (index >= widget.videos.length - 2) {
+          widget.onLoadMore();
+        }
+      },
       itemBuilder: (context, index) {
         final video = widget.videos[index];
         final controls = _controls.putIfAbsent(video.id, VideoPlaybackControls.new);

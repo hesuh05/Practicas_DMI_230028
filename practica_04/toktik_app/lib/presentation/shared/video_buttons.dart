@@ -45,12 +45,22 @@ class VideoButtons extends StatelessWidget {
           semanticLabel: 'Visualizaciones',
         ),
         const SizedBox(height: 20),
-        ValueListenableBuilder<bool>(
-          valueListenable: controls.muted,
-          builder: (context, isMuted, _) => _CustomIconButton(
-            iconData: isMuted ? Icons.volume_off : Icons.volume_up,
-            semanticLabel: isMuted ? 'Activar sonido' : 'Silenciar',
-            onPressed: controls.toggleMute,
+        ValueListenableBuilder<bool?>(
+          valueListenable: controls.audioAvailable,
+          builder: (context, audioAvailable, _) => ValueListenableBuilder<bool>(
+            valueListenable: controls.muted,
+            builder: (context, isMuted, _) => _CustomIconButton(
+              iconData: audioAvailable != true || isMuted
+                  ? Icons.volume_off
+                  : Icons.volume_up,
+              iconColor: audioAvailable != true ? Colors.white38 : Colors.white,
+              semanticLabel: audioAvailable != true
+                  ? 'Audio no disponible'
+                  : isMuted
+                  ? 'Activar sonido'
+                  : 'Silenciar',
+              onPressed: audioAvailable != true ? null : controls.toggleMute,
+            ),
           ),
         ),
         const SizedBox(height: 20),

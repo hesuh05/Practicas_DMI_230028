@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:toktik/config/theme/app_theme.dart';
 import 'package:toktik/presentation/providers/discover_provider.dart';
 import 'package:toktik/presentation/providers/season_provider.dart';
+import 'package:toktik/presentation/providers/video_source_provider.dart';
 import 'package:toktik/presentation/screens/discover/discover_screen.dart';
+import 'package:toktik/presentation/widgets/video_source_settings_dialog.dart';
 
 class VideoSectionsScreen extends StatefulWidget {
   const VideoSectionsScreen({super.key});
@@ -15,13 +17,35 @@ class VideoSectionsScreen extends StatefulWidget {
 class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
   final PageController _pageController = PageController();
   int _selectedIndex = 0;
+  bool _sourceListenerAttached = false;
 
   static const _titles = ['Discover', 'For You', 'Favorites'];
 
   @override
   void dispose() {
+    context.read<VideoSourceProvider>().removeListener(_showSourceNotice);
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_sourceListenerAttached) {
+      context.read<VideoSourceProvider>().addListener(_showSourceNotice);
+      _sourceListenerAttached = true;
+    }
+  }
+
+  void _showSourceNotice() {
+    final provider = context.read<VideoSourceProvider>();
+    final notice = provider.notice;
+    if (notice == null || !mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(notice)));
+      provider.clearNotice();
+    });
   }
 
   Future<void> _openSeasonSettings() async {
@@ -35,6 +59,7 @@ class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
   @override
   Widget build(BuildContext context) {
     final season = context.watch<SeasonProvider>().season;
+    final sourceProvider = context.watch<VideoSourceProvider>();
     final seasonIcon = switch (season) {
       AppSeason.halloween => Icons.nightlight_round,
       AppSeason.christmas => Icons.ac_unit,
@@ -51,6 +76,11 @@ class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
             tooltip: 'Tema y modo de prueba',
             onPressed: _openSeasonSettings,
             icon: const Icon(Icons.tune),
+          ),
+          IconButton(
+            tooltip: 'Fuente de videos: ${sourceProvider.mode.label}',
+            onPressed: _openVideoSourceSettings,
+            icon: const Icon(Icons.cloud_queue),
           ),
         ],
       ),
@@ -97,6 +127,20 @@ class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _openVideoSourceSettings() async {
+    final provider = context.read<VideoSourceProvider>();
+    final previousMode = provider.mode;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => VideoSourceSettingsDialog(provider: provider),
+    );
+    if (!mounted || provider.mode == previousMode) return;
+    await Future.wait([
+      context.read<DiscoverProvider>().reload(),
+      context.read<ForYouProvider>().reload(),
+    ]);
   }
 }
 

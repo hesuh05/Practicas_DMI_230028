@@ -1,24 +1,32 @@
 import 'package:toktik/domain/entities/video_post.dart';
 
-class PexelsVideoMapper {
-  const PexelsVideoMapper._();
+class CoverrVideoMapper {
+  const CoverrVideoMapper._();
 
   static VideoPost fromJson(Map<String, dynamic> json) {
-    final videoFiles = json['video_files'] as List<dynamic>? ?? const [];
-    final playableUrl = _findPlayableUrl(videoFiles, (file) => file['link']);
-    if (playableUrl == null) {
-      throw const FormatException('Pexels video has no playable MP4 file.');
+    final urls = json['urls'] as Map<String, dynamic>? ?? const {};
+    final fullUrl = urls['mp4'];
+    final previewUrl = urls['mp4_preview'];
+    final fullIsValid = fullUrl is String && fullUrl.startsWith('https://');
+    final previewIsValid =
+        previewUrl is String && previewUrl.startsWith('https://');
+    if (!fullIsValid && !previewIsValid) {
+      throw const FormatException('Coverr video has no playable MP4 file.');
     }
-    final user = json['user'] as Map<String, dynamic>? ?? const {};
+    final width = (json['max_width'] as num?)?.toInt() ?? 0;
+    final height = (json['max_height'] as num?)?.toInt() ?? 0;
+    final useFullUrl =
+        fullIsValid &&
+        (width == 0 || width <= 1920) &&
+        (height == 0 || height <= 1920);
+    final playableUrl = useFullUrl ? fullUrl : previewUrl;
     return VideoPost(
-      id: 'pexels-${json['id']}',
-      caption: (user['name'] as String?)?.trim().isNotEmpty == true
-          ? user['name'] as String
-          : 'Video de Pexels',
-      videoUrl: playableUrl,
-      likes: (json['likes'] as num?)?.toInt() ?? 0,
+      id: 'coverr-${json['id']}',
+      caption: json['title'] as String? ?? 'Video de Coverr',
+      videoUrl: playableUrl as String,
+      likes: 0,
       views: (json['views'] as num?)?.toInt() ?? 0,
-      source: 'pexels',
+      source: 'coverr',
     );
   }
 }
@@ -65,60 +73,32 @@ String? _findPixabayPlayableUrl(Map<String, dynamic> videos) {
   return null;
 }
 
-class VimeoVideoMapper {
-  const VimeoVideoMapper._();
+class InternetArchiveVideoMapper {
+  const InternetArchiveVideoMapper._();
 
   static VideoPost fromJson(Map<String, dynamic> json) {
-    final files = json['files'] as List<dynamic>? ?? const [];
-    final playableUrl = _findPlayableUrl(files, (file) {
-      return file['link_secure'] ?? file['link'];
-    });
-    if (playableUrl == null) {
-      throw const FormatException(
-        'Vimeo did not return a playable file for this video.',
-      );
+    final identifier = json['identifier'] as String?;
+    final fileName = json['file_name'] as String?;
+    if (identifier == null || fileName == null || fileName.isEmpty) {
+      throw const FormatException('Internet Archive video has no MP4 file.');
     }
     return VideoPost(
-      id: 'vimeo-${json['uri'] ?? json['id']}',
-      caption: (json['name'] as String?)?.trim().isNotEmpty == true
-          ? json['name'] as String
-          : 'Video de Vimeo',
-      videoUrl: playableUrl,
+      id: 'archive-$identifier',
+      caption: (json['title'] as String?)?.trim().isNotEmpty == true
+          ? json['title'] as String
+          : 'Video de Internet Archive',
+      videoUrl: Uri.https(
+        'archive.org',
+        '/download/$identifier/$fileName',
+      ).toString(),
       likes: 0,
-      views:
-          ((json['stats'] as Map<String, dynamic>?)?['plays'] as num?)
-              ?.toInt() ??
-          0,
-      source: 'vimeo',
+      views: _asInt(json['downloads']),
+      source: 'internet_archive',
     );
   }
-}
 
-String? _findPlayableUrl(
-  List<dynamic> files,
-  Object? Function(Map<String, dynamic>) readUrl,
-) {
-  final candidates = files
-      .whereType<Map<String, dynamic>>()
-      .map(
-        (file) =>
-            (url: readUrl(file), width: (file['width'] as num?)?.toInt() ?? 0),
-      )
-      .where(
-        (candidate) =>
-            candidate.url is String &&
-            (candidate.url as String).startsWith('https://') &&
-            (candidate.url as String).contains('.mp4'),
-      )
-      .toList();
-  if (candidates.isEmpty) return null;
-
-  // Avoid selecting 4K AVC files that many Android hardware decoders reject.
-  final mobileCandidates = candidates.where((candidate) {
-    return candidate.width == 0 || candidate.width <= 1920;
-  }).toList();
-  if (mobileCandidates.isEmpty) return null;
-  final selected = mobileCandidates;
-  selected.sort((a, b) => b.width.compareTo(a.width));
-  return selected.first.url as String;
+  static int _asInt(Object? value) {
+    if (value is num) return value.toInt();
+    return int.tryParse('$value') ?? 0;
+  }
 }

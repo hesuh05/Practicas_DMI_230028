@@ -5,10 +5,7 @@ import 'package:toktik/domain/repositories/video_posts_repository.dart';
 enum VideoFeed { discover, forYou, favorites }
 
 class VideoFeedProvider extends ChangeNotifier {
-  VideoFeedProvider({
-    required this.videosRepository,
-    required this.feed,
-  });
+  VideoFeedProvider({required this.videosRepository, required this.feed});
 
   final VideoPostRepository videosRepository;
   final VideoFeed feed;
@@ -18,19 +15,49 @@ class VideoFeedProvider extends ChangeNotifier {
   List<VideoPost> videos = [];
   String? errorMessage;
   int _page = 1;
+  Future<void>? _activeLoad;
 
-  Future<void> loadNextPage() async {
-    if (loading) return;
+  Future<void> reload() async {
+    _page = 1;
+    videos = [];
+    initialLoading = true;
+    notifyListeners();
+
+    final activeLoad = _activeLoad;
+    if (activeLoad != null) {
+      await activeLoad;
+      _page = 1;
+      videos = [];
+      initialLoading = true;
+      errorMessage = null;
+    }
+    await loadNextPage();
+  }
+
+  Future<void> loadNextPage() {
+    final activeLoad = _activeLoad;
+    if (activeLoad != null) return activeLoad;
+    final load = _loadNextPage();
+    _activeLoad = load;
+    return load.whenComplete(() {
+      if (identical(_activeLoad, load)) {
+        _activeLoad = null;
+      }
+    });
+  }
+
+  Future<void> _loadNextPage() async {
     loading = true;
     errorMessage = null;
     try {
       final loadedVideos = switch (feed) {
-        VideoFeed.discover =>
-          await videosRepository.getTrendingVideosByPage(_page),
-        VideoFeed.forYou =>
-          await videosRepository.getForYouVideosByPage(_page),
-        VideoFeed.favorites =>
-          await videosRepository.getFavoriteVideosByUser('local-user'),
+        VideoFeed.discover => await videosRepository.getTrendingVideosByPage(
+          _page,
+        ),
+        VideoFeed.forYou => await videosRepository.getForYouVideosByPage(_page),
+        VideoFeed.favorites => await videosRepository.getFavoriteVideosByUser(
+          'local-user',
+        ),
       };
       if (feed == VideoFeed.favorites || _page == 1) {
         videos = loadedVideos;

@@ -5,57 +5,50 @@ dominio, infraestructura y presentación.
 
 ## Funciones
 
-- Desplazamiento lateral entre **Discover**, **For You** y **Favorites**.
-- Fuentes remotas en cascada: Pexels, Pixabay y Vimeo. Si una fuente falla o
-  no ofrece archivos MP4 reproducibles, se intenta la siguiente; la lista de
-  videos locales es el último fallback.
-- Reproducción por video, pausa/reanudación por toque o botón y control de
-  silencio.
-- Me gusta persistentes y colección de favoritos guardados con
-  `SharedPreferences`.
-- Temas automáticos por fecha: Halloween (30 oct–3 nov), Navidad (5 dic–5 ene)
-  y San Valentín (14 feb); los demás días usan el tema normal.
-- Selector de temporada y fecha de prueba persistido localmente. Una temporada
-  elegida manualmente tiene prioridad sobre la fecha forzada.
-- El splash reproduce una breve melodía sintetizada y en bucle para cada tema;
-  no requiere archivos de audio adicionales. En Chrome, pulsa `Continuar` si
-  el navegador bloquea la reproducción automática.
+- Desplazamiento entre **Discover**, **For You** y **Favorites**.
+- Fuentes remotas en cascada: Coverr, Pixabay e Internet Archive. Si una fuente
+  falla o no ofrece un stream reproducible, se intenta la siguiente.
+- Reproducción, pausa/reanudación, silencio y favoritos persistentes.
+- Temas automáticos por fecha y selector de temporada para pruebas.
+- Selector de fuente persistido: Aleatorio, Coverr, Pixabay, Internet Archive o
+  Local. La fuente elegida se intenta primero y conserva el fallback.
+- Splash con melodía sintetizada para cada tema.
 
 ## Credenciales de APIs
 
 No escribas claves en el código ni en el repositorio. Las variables de
-compilación se leen desde
-[`lib/config/api/api_config.dart`](lib/config/api/api_config.dart):
+compilación se leen desde `lib/config/api/api_config.dart`:
 
 | Variable de compilación | Servicio | Uso |
 | --- | --- | --- |
-| `PEXELS_API_KEY` | Pexels Videos API | Cabecera `Authorization` para el catálogo popular |
-| `PIXABAY_API_KEY` | Pixabay Videos API | Parámetro `key` para búsquedas de video |
-| `VIMEO_ACCESS_TOKEN` | Vimeo API v3 | Bearer token; el token debe tener acceso al campo `files` para reproducir MP4 |
+| `COVERR_API_KEY` | Coverr Videos API | API key para obtener URLs MP4 |
+| `PIXABAY_API_KEY` | Pixabay Videos API | Parámetro `key` para búsquedas |
+| No requiere clave | Internet Archive API pública | Búsqueda y metadatos de videos |
 
-En Windows, inicia la app pasando las claves que tengas disponibles:
+Ejemplo en Windows:
 
 ```powershell
 flutter run `
-  --dart-define=PEXELS_API_KEY=tu_clave_pexels `
-  --dart-define=PIXABAY_API_KEY=tu_clave_pixabay `
-  --dart-define=VIMEO_ACCESS_TOKEN=tu_token_vimeo
+  --dart-define=COVERR_API_KEY=tu_clave_coverr `
+  --dart-define=PIXABAY_API_KEY=tu_clave_pixabay
 ```
 
-Las claves son opcionales: sin ellas, los adaptadores reportan el error y el
-repositorio sigue con la siguiente fuente. Para usar el fallback local, agrega
-tus archivos MP4 en `assets/videos/` y declara esa carpeta en `pubspec.yaml`;
-este repositorio no incluye archivos de video pesados.
+Internet Archive no requiere `--dart-define`.
+
+Internet Archive usa búsquedas públicas y después consulta los metadatos de
+cada elemento para construir una URL MP4 directa. Si un elemento no contiene
+un MP4 compatible, se omite y se intenta otro resultado.
+
+Las claves son opcionales: sin ellas, el repositorio continúa con la siguiente
+fuente. Para usar videos locales, agrega MP4 en `assets/videos/` y declara la
+carpeta en `pubspec.yaml`.
 
 ## Organización
 
-- `lib/domain/`: entidades, contratos de repositorios y contratos de fuentes
-  locales/remotas.
-- `lib/infrastructure/`: API HTTP, mappers, almacenamiento de preferencias y
-  repositorio con fallback.
-- `lib/presentation/`: feeds, controles del reproductor, navegación y ajustes
-  de tema.
-- `lib/config/`: temas dinámicos y configuración de APIs.
+- `lib/domain/`: entidades y contratos.
+- `lib/infrastructure/`: APIs, mappers y repositorio con fallback.
+- `lib/presentation/`: feeds, controles y navegación.
+- `lib/config/`: temas y configuración de APIs.
 
 Ejecuta `flutter analyze` y `flutter test` desde esta carpeta para validar el
 proyecto.

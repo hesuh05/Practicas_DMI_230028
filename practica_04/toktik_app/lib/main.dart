@@ -5,15 +5,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktik/config/api/api_config.dart';
 import 'package:toktik/config/theme/app_theme.dart';
 import 'package:toktik/domain/datasources/video_posts_datasource.dart';
-import 'package:toktik/domain/repositories/video_posts_repository.dart';
 import 'package:toktik/infrastructure/datasources/local_video_datasource_impl.dart';
-import 'package:toktik/infrastructure/datasources/pexels_video_datasource.dart';
+import 'package:toktik/infrastructure/datasources/coverr_video_datasource.dart';
 import 'package:toktik/infrastructure/datasources/pixabay_video_datasource.dart';
 import 'package:toktik/infrastructure/datasources/shared_preferences_video_store.dart';
-import 'package:toktik/infrastructure/datasources/vimeo_video_datasource.dart';
+import 'package:toktik/infrastructure/datasources/internet_archive_video_datasource.dart';
 import 'package:toktik/infrastructure/repositories/video_posts_repository_impl.dart';
 import 'package:toktik/presentation/providers/discover_provider.dart';
 import 'package:toktik/presentation/providers/season_provider.dart';
+import 'package:toktik/presentation/providers/video_source_provider.dart';
 import 'package:toktik/presentation/screens/splash_screen.dart';
 import 'package:toktik/presentation/screens/video_sections_screen.dart';
 
@@ -29,36 +29,49 @@ Future<void> main() async {
 
     final client = http.Client();
     final localVideos = LocalVideoDatasource();
-    final pexels = PexelsVideoDatasource(
+    final coverr = CoverrVideoDatasource(
       client: client,
-      apiKey: ApiConfig.pexelsApiKey,
+      apiKey: ApiConfig.coverrApiKey,
     );
     final pixabay = PixabayVideoDatasource(
       client: client,
       apiKey: ApiConfig.pixabayApiKey,
     );
-    final vimeo = VimeoVideoDatasource(
+    final internetArchive = InternetArchiveVideoDatasource(
       client: client,
-      accessToken: ApiConfig.vimeoAccessToken,
     );
     final discoverRepository = _createRepository([
-      pexels,
+      coverr,
       pixabay,
-      vimeo,
+      internetArchive,
       localVideos,
     ], localStore);
     final forYouRepository = _createRepository([
       pixabay,
-      pexels,
-      vimeo,
+      coverr,
+      internetArchive,
       localVideos,
     ], localStore);
     final favoritesRepository = _createRepository([localVideos], localStore);
+    final sourceProvider = VideoSourceProvider(
+      localStore: localStore,
+      repositories: [discoverRepository, forYouRepository],
+      sources: {
+        VideoSourceMode.coverr: coverr,
+        VideoSourceMode.pixabay: pixabay,
+        VideoSourceMode.internetArchive: internetArchive,
+        VideoSourceMode.local: localVideos,
+      },
+    );
+    discoverRepository.onFallback = sourceProvider.reportFallback;
+    forYouRepository.onFallback = sourceProvider.reportFallback;
+    await sourceProvider.load();
 
     runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: seasonProvider),
+          ChangeNotifierProvider.value(value: sourceProvider),
           ChangeNotifierProvider(
             lazy: false,
             create: (_) =>
@@ -87,7 +100,7 @@ Future<void> main() async {
   }
 }
 
-VideoPostRepository _createRepository(
+VideoPostsRepositoryImpl _createRepository(
   List<VideoPostDatasource> datasources,
   SharedPreferencesVideoStore localStore,
 ) {
