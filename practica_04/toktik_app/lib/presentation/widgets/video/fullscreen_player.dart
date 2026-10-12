@@ -4,7 +4,7 @@ import 'package:toktik/presentation/widgets/video/video_background.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlaybackControls {
-  final muted = ValueNotifier<bool>(true);
+  final muted = ValueNotifier<bool>(false);
   final playing = ValueNotifier<bool>(false);
   Future<void> Function()? _toggleMute;
   Future<void> Function()? _togglePlayback;
@@ -118,15 +118,14 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              'No se pudo reproducir este video.\n${snapshot.error}',
+              'No se pudo reproducir este video de ${widget.video.source}.\n'
+              '${snapshot.error}',
               textAlign: TextAlign.center,
             ),
           );
         }
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         }
         return Stack(
           fit: StackFit.expand,
@@ -189,9 +188,9 @@ class _VideoCaptionState extends State<_VideoCaption> {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: Colors.white,
-          shadows: const [Shadow(color: Colors.black54, blurRadius: 6)],
-        );
+      color: Colors.white,
+      shadows: const [Shadow(color: Colors.black54, blurRadius: 6)],
+    );
     return LayoutBuilder(
       builder: (context, constraints) {
         final textPainter = TextPainter(

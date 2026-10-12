@@ -19,59 +19,72 @@ import 'package:toktik/presentation/screens/video_sections_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final preferences = await SharedPreferences.getInstance();
-  final localStore = SharedPreferencesVideoStore(preferences);
-  final seasonProvider = SeasonProvider(localStore: localStore);
-  await seasonProvider.load();
+  try {
+    final preferences = await SharedPreferences.getInstance().timeout(
+      const Duration(seconds: 5),
+    );
+    final localStore = SharedPreferencesVideoStore(preferences);
+    final seasonProvider = SeasonProvider(localStore: localStore);
+    await seasonProvider.load().timeout(const Duration(seconds: 5));
 
-  final client = http.Client();
-  final localVideos = LocalVideoDatasource();
-  final pexels = PexelsVideoDatasource(
-    client: client,
-    apiKey: ApiConfig.pexelsApiKey,
-  );
-  final pixabay = PixabayVideoDatasource(
-    client: client,
-    apiKey: ApiConfig.pixabayApiKey,
-  );
-  final vimeo = VimeoVideoDatasource(
-    client: client,
-    accessToken: ApiConfig.vimeoAccessToken,
-  );
-  final discoverRepository = _createRepository(
-    [pexels, pixabay, vimeo, localVideos],
-    localStore,
-  );
-  final forYouRepository = _createRepository(
-    [pixabay, pexels, vimeo, localVideos],
-    localStore,
-  );
-  final favoritesRepository = _createRepository([localVideos], localStore);
+    final client = http.Client();
+    final localVideos = LocalVideoDatasource();
+    final pexels = PexelsVideoDatasource(
+      client: client,
+      apiKey: ApiConfig.pexelsApiKey,
+    );
+    final pixabay = PixabayVideoDatasource(
+      client: client,
+      apiKey: ApiConfig.pixabayApiKey,
+    );
+    final vimeo = VimeoVideoDatasource(
+      client: client,
+      accessToken: ApiConfig.vimeoAccessToken,
+    );
+    final discoverRepository = _createRepository([
+      pexels,
+      pixabay,
+      vimeo,
+      localVideos,
+    ], localStore);
+    final forYouRepository = _createRepository([
+      pixabay,
+      pexels,
+      vimeo,
+      localVideos,
+    ], localStore);
+    final favoritesRepository = _createRepository([localVideos], localStore);
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: seasonProvider),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => DiscoverProvider(videosRepository: discoverRepository)
-            ..loadNextPage(),
-        ),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => ForYouProvider(videosRepository: forYouRepository)
-            ..loadNextPage(),
-        ),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) =>
-              FavoritesProvider(videosRepository: favoritesRepository)
-                ..loadNextPage(),
-        ),
-      ],
-      child: const TokTikApp(),
-    ),
-  );
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: seasonProvider),
+          ChangeNotifierProvider(
+            lazy: false,
+            create: (_) =>
+                DiscoverProvider(videosRepository: discoverRepository)
+                  ..loadNextPage(),
+          ),
+          ChangeNotifierProvider(
+            lazy: false,
+            create: (_) =>
+                ForYouProvider(videosRepository: forYouRepository)
+                  ..loadNextPage(),
+          ),
+          ChangeNotifierProvider(
+            lazy: false,
+            create: (_) =>
+                FavoritesProvider(videosRepository: favoritesRepository)
+                  ..loadNextPage(),
+          ),
+        ],
+        child: const TokTikApp(),
+      ),
+    );
+  } on Object catch (error, stackTrace) {
+    debugPrint('TokTik could not start: $error\n$stackTrace');
+    runApp(StartupErrorApp(error: error));
+  }
 }
 
 VideoPostRepository _createRepository(
@@ -84,8 +97,15 @@ VideoPostRepository _createRepository(
   );
 }
 
-class TokTikApp extends StatelessWidget {
+class TokTikApp extends StatefulWidget {
   const TokTikApp({super.key});
+
+  @override
+  State<TokTikApp> createState() => _TokTikAppState();
+}
+
+class _TokTikAppState extends State<TokTikApp> {
+  bool _showSplash = true;
 
   @override
   Widget build(BuildContext context) {
@@ -94,15 +114,38 @@ class TokTikApp extends StatelessWidget {
       title: 'TokTik',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().getTheme(season),
-      home: SplashScreen(
-        season: season,
-        onFinished: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute<void>(
-              builder: (_) => const VideoSectionsScreen(),
+      home: _showSplash
+          ? SplashScreen(
+              season: season,
+              onFinished: () {
+                if (mounted) setState(() => _showSplash = false);
+              },
+            )
+          : const VideoSectionsScreen(),
+    );
+  }
+}
+
+class StartupErrorApp extends StatelessWidget {
+  const StartupErrorApp({required this.error, super.key});
+
+  final Object error;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TokTik',
+      theme: AppTheme().getTheme(AppSeason.normal),
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              'TokTik no pudo iniciar.\n\n$error',
+              textAlign: TextAlign.center,
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

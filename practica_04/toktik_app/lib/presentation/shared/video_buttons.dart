@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:toktik/config/helpers/human_formats.dart';
 import 'package:toktik/domain/entities/video_post.dart';
@@ -32,7 +31,9 @@ class VideoButtons extends StatelessWidget {
             } catch (error) {
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('No se pudo guardar el Me gusta: $error')),
+                SnackBar(
+                  content: Text('No se pudo guardar el Me gusta: $error'),
+                ),
               );
             }
           },
@@ -53,10 +54,13 @@ class VideoButtons extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        SpinPerfect(
-          infinite: true,
-          duration: const Duration(seconds: 5),
-          child: const Icon(Icons.music_note, size: 32, color: Colors.white),
+        ValueListenableBuilder<bool>(
+          valueListenable: controls.playing,
+          builder: (context, isPlaying, _) => _CustomIconButton(
+            iconData: isPlaying ? Icons.pause : Icons.play_arrow,
+            semanticLabel: isPlaying ? 'Pausar video' : 'Reanudar video',
+            onPressed: controls.togglePlayback,
+          ),
         ),
       ],
     );
