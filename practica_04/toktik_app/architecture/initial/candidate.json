@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TokTik · Arquitectura inicial",
+    "subtitle": "Flujo de lectura en una sola dirección",
+    "output": "practica_04/toktik_app/architecture/initial/architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/hesuh05/Practicas_DMI_230028",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "6139bebc95b75ca25652250d0dcf0501265cb59a"
+    }
+  },
+  "components": [
+    {
+      "id": "viewer",
+      "type": "external",
+      "label": "Persona",
+      "sublabel": "iOS · Android · Web",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "app",
+      "type": "frontend",
+      "label": "TokTik App",
+      "sublabel": "Flutter · Provider",
+      "pos": [
+        250,
+        60
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/main.dart",
+          "line": 1,
+          "end_line": 37
+        }
+      ]
+    },
+    {
+      "id": "screen",
+      "type": "frontend",
+      "label": "DiscoverScreen",
+      "sublabel": "pantalla de videos",
+      "pos": [
+        490,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/presentation/screens/discover/discover_screen.dart",
+          "line": 1,
+          "end_line": 18
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "type": "backend",
+      "label": "DiscoverProvider",
+      "sublabel": "estado y carga",
+      "pos": [
+        740,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/presentation/providers/discover_provider.dart",
+          "line": 1,
+          "end_line": 16
+        }
+      ]
+    },
+    {
+      "id": "contract",
+      "type": "backend",
+      "label": "Repository",
+      "sublabel": "contrato de videos",
+      "pos": [
+        990,
+        60
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/domain/repositories/video_posts_repository.dart",
+          "line": 1,
+          "end_line": 11
+        }
+      ]
+    },
+    {
+      "id": "impl",
+      "type": "backend",
+      "label": "Repository Impl",
+      "sublabel": "coordina datasource",
+      "pos": [
+        1230,
+        60
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/repositories/video_posts_repository_impl.dart",
+          "line": 1,
+          "end_line": 35
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "type": "database",
+      "label": "Local Videos",
+      "sublabel": "datos de demostración",
+      "pos": [
+        1490,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "sources": [
+        {
+          "path": "practica_04/toktik_app/lib/infrastructure/datasources/local_video_datasource_impl.dart",
+          "line": 1,
+          "end_line": 24
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "view-app",
+      "from": "viewer",
+      "to": "app",
+      "label": "abre"
+    },
+    {
+      "id": "app-screen",
+      "from": "app",
+      "to": "screen",
+      "label": "muestra"
+    },
+    {
+      "id": "screen-state",
+      "from": "screen",
+      "to": "state",
+      "label": "carga"
+    },
+    {
+      "id": "state-contract",
+      "from": "state",
+      "to": "contract",
+      "label": "consulta"
+    },
+    {
+      "id": "contract-impl",
+      "from": "contract",
+      "to": "impl",
+      "label": "usa"
+    },
+    {
+      "id": "impl-local",
+      "from": "impl",
+      "to": "local",
+      "label": "lee videos"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Lectura inicial",
+      "items": [
+        "La pantalla solicita el feed al estado; el repositorio delega en su datasource local.",
+        "Los resultados regresan al feed para mostrarse en el reproductor vertical."
+      ]
+    }
+  ]
+}
