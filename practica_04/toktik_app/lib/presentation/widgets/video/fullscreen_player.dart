@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:toktik/domain/entities/video_post.dart';
 import 'package:toktik/presentation/widgets/video/video_background.dart';
 import 'package:video_player/video_player.dart';
@@ -6,6 +8,7 @@ import 'package:video_player/video_player.dart';
 class VideoPlaybackControls {
   final muted = ValueNotifier<bool>(false);
   final playing = ValueNotifier<bool>(false);
+  final audioAvailable = ValueNotifier<bool?>(null);
   Future<void> Function()? _toggleMute;
   Future<void> Function()? _togglePlayback;
 
@@ -16,6 +19,7 @@ class VideoPlaybackControls {
   void dispose() {
     muted.dispose();
     playing.dispose();
+    audioAvailable.dispose();
     _toggleMute = null;
     _togglePlayback = null;
   }
@@ -55,10 +59,28 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
 
   Future<void> _initialize() async {
     await _controller.initialize();
+    await _detectAudioTrack();
     await _controller.setLooping(true);
     await _controller.setVolume(widget.controls.muted.value ? 0 : 1);
     if (widget.shouldPlay) {
       await _controller.play();
+    }
+  }
+
+  Future<void> _detectAudioTrack() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      widget.controls.audioAvailable.value = true;
+      return;
+    }
+    try {
+      final hasAudio = await const MethodChannel('toktik/audio')
+          .invokeMethod<bool>('hasAudioTrack', {'url': widget.video.videoUrl});
+      widget.controls.audioAvailable.value = hasAudio ?? true;
+    } on MissingPluginException {
+      widget.controls.audioAvailable.value = true;
+    } on PlatformException catch (error) {
+      debugPrint('Could not detect video audio track: $error');
+      widget.controls.audioAvailable.value = true;
     }
   }
 
@@ -83,7 +105,10 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
   }
 
   Future<void> _toggleMute() async {
-    if (!_controller.value.isInitialized) return;
+    if (!_controller.value.isInitialized ||
+        widget.controls.audioAvailable.value == false) {
+      return;
+    }
     final isMuted = _controller.value.volume == 0;
     await _controller.setVolume(isMuted ? 1 : 0);
     widget.controls.muted.value = !isMuted;

@@ -11,8 +11,13 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
     required this.localStore,
   });
 
-  final List<VideoPostDatasource> videoDatasources;
+  List<VideoPostDatasource> videoDatasources;
   final VideoPostLocalStore localStore;
+  void Function(String message)? onFallback;
+
+  void setDataSources(List<VideoPostDatasource> datasources) {
+    videoDatasources = datasources;
+  }
 
   @override
   Future<List<VideoPost>> getFavoriteVideosByUser(String userID) async {
@@ -55,6 +60,9 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
           error: error,
           level: 900,
         );
+        onFallback?.call(
+          '${datasource.runtimeType} no devolvió videos; se intentará otra fuente.',
+        );
       } catch (error, stackTrace) {
         failures.add(error);
         developer.log(
@@ -63,6 +71,10 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
           error: error,
           stackTrace: stackTrace,
           level: 900,
+        );
+        onFallback?.call(
+          '${datasource.runtimeType} falló: $error. '
+          'Se intentará otra fuente.',
         );
       }
     }

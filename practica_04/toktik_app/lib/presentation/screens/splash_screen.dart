@@ -34,7 +34,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _playSplashAudio() async {
     final notes = switch (widget.season) {
-      AppSeason.halloween => [146.83, 174.61, 155.56, 233.08, 146.83, 116.54],
+      AppSeason.halloween => [
+        146.83,
+        174.61,
+        146.83,
+        233.08,
+        220.00,
+        174.61,
+        146.83,
+        174.61,
+        155.56,
+        233.08,
+        174.61,
+        116.54,
+      ],
       AppSeason.christmas => [261.63, 329.63, 392.00, 523.25, 392.00, 329.63],
       AppSeason.valentines => [261.63, 293.66, 329.63, 392.00, 329.63, 293.66],
       AppSeason.normal => [261.63, 329.63, 392.00, 523.25, 392.00, 329.63],

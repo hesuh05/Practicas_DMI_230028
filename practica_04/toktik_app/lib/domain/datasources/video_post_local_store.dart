@@ -8,6 +8,10 @@ abstract class VideoPostLocalStore {
   Future<SeasonPreferences> getSeasonPreferences();
 
   Future<void> saveSeasonPreferences(SeasonPreferences preferences);
+
+  Future<String?> getVideoSourceMode() async => null;
+
+  Future<void> saveVideoSourceMode(String mode) async {}
 }
 
 class SeasonPreferences {

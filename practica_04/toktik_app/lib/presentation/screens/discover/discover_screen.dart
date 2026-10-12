@@ -85,6 +85,7 @@ class _VideoFeedBody<T extends VideoFeedProvider> extends StatelessWidget {
     return VideoScrollableView(
       videos: provider.videos,
       onLike: provider.toggleLike,
+      onLoadMore: provider.loadNextPage,
       isVisible: isVisible,
       emptyMessage: emptyMessage ?? 'No hay videos disponibles.',
     );
