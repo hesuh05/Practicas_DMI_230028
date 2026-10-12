@@ -28,40 +28,56 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _audioPlayer.audioCache = AudioCache(prefix: '');
     _timer = Timer(const Duration(seconds: 3), _finish);
     unawaited(_playSplashAudio());
   }
 
   Future<void> _playSplashAudio() async {
-    final notes = switch (widget.season) {
-      AppSeason.halloween => [
-        146.83,
-        174.61,
-        146.83,
-        233.08,
-        220.00,
-        174.61,
-        146.83,
-        174.61,
-        155.56,
-        233.08,
-        174.61,
-        116.54,
-      ],
-      AppSeason.christmas => [261.63, 329.63, 392.00, 523.25, 392.00, 329.63],
-      AppSeason.valentines => [261.63, 293.66, 329.63, 392.00, 329.63, 293.66],
-      AppSeason.normal => [261.63, 329.63, 392.00, 523.25, 392.00, 329.63],
-    };
     try {
-      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      await _audioPlayer.setVolume(0.35);
-      await _audioPlayer.play(
-        BytesSource(_makeWav(notes), mimeType: 'audio/wav'),
-      );
+      await _audioPlayer.stop();
+      await _audioPlayer.setReleaseMode(ReleaseMode.release);
+      await _audioPlayer.setVolume(0.8);
+      final audioAsset = switch (widget.season) {
+        AppSeason.halloween => 'lib/assets/audio/halloween.mp3',
+        AppSeason.christmas => 'lib/assets/audio/christmas.mp3',
+        AppSeason.valentines => 'lib/assets/audio/valentine.mp3',
+        AppSeason.normal => null,
+      };
+      if (audioAsset == null) {
+        await _audioPlayer.play(
+          BytesSource(
+            _makeWav([
+              261.63,
+              329.63,
+              392.00,
+              523.25,
+              392.00,
+              329.63,
+              293.66,
+              349.23,
+              440.00,
+              523.25,
+              440.00,
+              349.23,
+            ]),
+            mimeType: 'audio/wav',
+          ),
+        );
+      } else {
+        await _audioPlayer.play(AssetSource(audioAsset));
+      }
     } on Exception catch (error, stackTrace) {
       debugPrint('Seasonal splash audio could not play: $error\n$stackTrace');
     }
   }
+
+  String _seasonAsset(AppSeason season) => switch (season) {
+    AppSeason.normal => 'lib/assets/flip_normal.png',
+    AppSeason.halloween => 'lib/assets/flip_halloween.png',
+    AppSeason.christmas => 'lib/assets/flip_christmas.png',
+    AppSeason.valentines => 'lib/assets/flip_san_valentin.png',
+  };
 
   Future<void> _continue() async {
     // Chrome allows audio started from this button even when autoplay is blocked.
@@ -79,20 +95,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final icon = switch (widget.season) {
-      AppSeason.halloween => Icons.nightlight_round,
-      AppSeason.christmas => Icons.ac_unit,
-      AppSeason.valentines => Icons.favorite,
-      AppSeason.normal => Icons.play_circle_fill,
-    };
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 76, color: Theme.of(context).colorScheme.primary),
+            Image.asset(
+              _seasonAsset(widget.season),
+              width: 104,
+              height: 104,
+              fit: BoxFit.contain,
+            ),
             const SizedBox(height: 12),
-            Text('TokTik', style: Theme.of(context).textTheme.headlineLarge),
+            Text('flip', style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 20),
             const CircularProgressIndicator(strokeWidth: 2),
             const SizedBox(height: 12),
@@ -150,7 +165,7 @@ class _SplashScreenState extends State<SplashScreen> {
         math.min(notePosition / 450, (samplesPerNote - notePosition) / 450),
       );
       final wave = math.sin(2 * math.pi * note * index / sampleRate);
-      final value = (wave * fade * 3800).round();
+      final value = (wave * fade * 10000).round();
       header.setInt16(44 + index * 2, value, Endian.little);
     }
     return bytes;

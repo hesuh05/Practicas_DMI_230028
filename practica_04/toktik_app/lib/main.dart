@@ -95,7 +95,7 @@ Future<void> main() async {
       ),
     );
   } on Object catch (error, stackTrace) {
-    debugPrint('TokTik could not start: $error\n$stackTrace');
+    debugPrint('flip could not start: $error\n$stackTrace');
     runApp(StartupErrorApp(error: error));
   }
 }
@@ -124,7 +124,7 @@ class _TokTikAppState extends State<TokTikApp> {
   Widget build(BuildContext context) {
     final season = context.watch<SeasonProvider>().season;
     return MaterialApp(
-      title: 'TokTik',
+      title: 'flip',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().getTheme(season),
       home: _showSplash
@@ -147,14 +147,14 @@ class StartupErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TokTik',
+      title: 'flip',
       theme: AppTheme().getTheme(AppSeason.normal),
       home: Scaffold(
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              'TokTik no pudo iniciar.\n\n$error',
+              'flip no pudo iniciar.\n\n$error',
               textAlign: TextAlign.center,
             ),
           ),
