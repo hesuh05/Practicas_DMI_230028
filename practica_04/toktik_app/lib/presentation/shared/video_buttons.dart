@@ -2,54 +2,94 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:toktik/config/helpers/human_formats.dart';
 import 'package:toktik/domain/entities/video_post.dart';
+import 'package:toktik/presentation/widgets/video/fullscreen_player.dart';
 
 class VideoButtons extends StatelessWidget {
-  final VideoPost video;
-  
   const VideoButtons({
-    super.key, 
-    required this.video
+    required this.video,
+    required this.controls,
+    required this.onLike,
+    super.key,
   });
+
+  final VideoPost video;
+  final VideoPlaybackControls controls;
+  final Future<void> Function(VideoPost) onLike;
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        _CustomIconButton(value: video.likes, iconData: Icons.favorite, iconColor: Colors.redAccent),
+        _CustomIconButton(
+          value: video.likes,
+          iconData: video.isLiked ? Icons.favorite : Icons.favorite_border,
+          iconColor: video.isLiked ? Colors.redAccent : Colors.white,
+          semanticLabel: video.isLiked ? 'Quitar Me gusta' : 'Me gusta',
+          onPressed: () async {
+            try {
+              await onLike(video);
+            } catch (error) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('No se pudo guardar el Me gusta: $error')),
+              );
+            }
+          },
+        ),
         const SizedBox(height: 20),
-        _CustomIconButton(value: video.views, iconData: Icons.remove_red_eye_outlined),
+        _CustomIconButton(
+          value: video.views,
+          iconData: Icons.remove_red_eye_outlined,
+          semanticLabel: 'Visualizaciones',
+        ),
+        const SizedBox(height: 20),
+        ValueListenableBuilder<bool>(
+          valueListenable: controls.muted,
+          builder: (context, isMuted, _) => _CustomIconButton(
+            iconData: isMuted ? Icons.volume_off : Icons.volume_up,
+            semanticLabel: isMuted ? 'Activar sonido' : 'Silenciar',
+            onPressed: controls.toggleMute,
+          ),
+        ),
         const SizedBox(height: 20),
         SpinPerfect(
           infinite: true,
-          duration: Duration(seconds: 5),
-          child: _CustomIconButton(value: 0, iconData: Icons.play_circle_outline)
+          duration: const Duration(seconds: 5),
+          child: const Icon(Icons.music_note, size: 32, color: Colors.white),
         ),
-        
       ],
     );
   }
 }
 
 class _CustomIconButton extends StatelessWidget {
-  
-  final int value;
-  final IconData iconData;
-  final Color? color;
-
   const _CustomIconButton({
-    required this.value, 
-    required this.iconData, 
-    iconColor
-  }): color = iconColor ?? Colors.white;
+    this.value,
+    required this.iconData,
+    this.iconColor = Colors.white,
+    this.semanticLabel,
+    this.onPressed,
+  });
+
+  final int? value;
+  final IconData iconData;
+  final Color iconColor;
+  final String? semanticLabel;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        IconButton(onPressed: (){}, icon: Icon(iconData, color: color, size: 30)),
-        if(value>0)
-        Text('${HumanFormats.humanReadableNumber(value.toDouble())}')
-      ]
+        IconButton(
+          tooltip: semanticLabel,
+          onPressed: onPressed,
+          icon: Icon(iconData, color: iconColor, size: 30),
+        ),
+        if (value != null && value! > 0)
+          Text(HumanFormats.humanReadableNumber(value!.toDouble())),
+      ],
     );
   }
 }

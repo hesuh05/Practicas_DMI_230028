@@ -22,9 +22,11 @@ class LocalVideoModel {
       );
 
   VideoPost toVideoPostEntity() => VideoPost(
-    caption: name, 
-    videoUrl: videoUrl,
-    likes: likes,
-    views: views
-  );
+        id: videoUrl,
+        caption: name,
+        videoUrl: videoUrl,
+        likes: likes,
+        views: views,
+        source: 'local',
+      );
 }

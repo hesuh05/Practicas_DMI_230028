@@ -1,0 +1,443 @@
+﻿{
+    "schema_version":  1,
+    "diagram_type":  "architecture",
+    "meta":  {
+                 "title":  "Arquitectura de TokTik - Practica 04",
+                 "subtitle":  "Flujo horizontal: plataformas Flutter, estado de descubrimiento y reproduccion local de videos",
+                 "output":  "practica_04/toktik_app/architecture/initial/architecture.html",
+                 "quality_profile":  "showcase",
+                 "repository":  {
+                                    "url":  "https://github.com/hesuh05/Practicas_DMI_230028",
+                                    "provider":  "github",
+                                    "link_mode":  "web",
+                                    "revision":  "5fd6fb182947106723eddb615812cef334b8cd76"
+                                }
+             },
+    "components":  [
+                       {
+                           "id":  "mobile",
+                           "type":  "external",
+                           "label":  "Mobile",
+                           "sublabel":  "iOS \u0026 Android",
+                           "pos":  [
+                                       80,
+                                       290
+                                   ],
+                           "size":  [
+                                        170,
+                                        62
+                                    ]
+                       },
+                       {
+                           "id":  "desktop",
+                           "type":  "external",
+                           "label":  "Desktop",
+                           "sublabel":  "Windows - macOS - Linux",
+                           "pos":  [
+                                       80,
+                                       390
+                                   ],
+                           "size":  [
+                                        190,
+                                        62
+                                    ]
+                       },
+                       {
+                           "id":  "web",
+                           "type":  "external",
+                           "label":  "Web",
+                           "sublabel":  "Web browsers",
+                           "pos":  [
+                                       80,
+                                       490
+                                   ],
+                           "size":  [
+                                        170,
+                                        62
+                                    ]
+                       },
+                       {
+                           "id":  "runtime",
+                           "type":  "frontend",
+                           "label":  "Flutter Runtime / Flutter App",
+                           "sublabel":  "TokTik - MaterialApp - Provider",
+                           "pos":  [
+                                       390,
+                                       390
+                                   ],
+                           "size":  [
+                                        230,
+                                        76
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/main.dart",
+                                               "line":  9,
+                                               "end_line":  37
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "discover",
+                           "type":  "frontend",
+                           "label":  "DiscoverScreen",
+                           "sublabel":  "Carga inicial y feed vertical",
+                           "pos":  [
+                                       700,
+                                       230
+                                   ],
+                           "size":  [
+                                        200,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/presentation/screens/discover/discover_screen.dart",
+                                               "line":  6,
+                                               "end_line":  18
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "provider",
+                           "type":  "backend",
+                           "label":  "DiscoverProvider",
+                           "sublabel":  "Estado: videos, carga y notifyListeners",
+                           "pos":  [
+                                       700,
+                                       480
+                                   ],
+                           "size":  [
+                                        230,
+                                        72
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/presentation/providers/discover_provider.dart",
+                                               "line":  5,
+                                               "end_line":  32
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "repo_contract",
+                           "type":  "backend",
+                           "label":  "VideoPostRepository",
+                           "sublabel":  "Contrato de trending videos",
+                           "pos":  [
+                                       1020,
+                                       480
+                                   ],
+                           "size":  [
+                                        220,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/domain/repositories/video_posts_repository.dart",
+                                               "line":  3,
+                                               "end_line":  8
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "repo_impl",
+                           "type":  "backend",
+                           "label":  "VideoPostsRepositoryImpl",
+                           "sublabel":  "Delegacion a datasource",
+                           "pos":  [
+                                       1320,
+                                       480
+                                   ],
+                           "size":  [
+                                        240,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/infrastructure/repositories/video_posts_repository_impl.dart",
+                                               "line":  7,
+                                               "end_line":  23
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "datasource",
+                           "type":  "backend",
+                           "label":  "LocalVideoDatasource",
+                           "sublabel":  "Espera 2 s y convierte modelos",
+                           "pos":  [
+                                       1620,
+                                       480
+                                   ],
+                           "size":  [
+                                        230,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/infrastructure/datasources/local_video_datasource_impl.dart",
+                                               "line":  6,
+                                               "end_line":  24
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "local_posts",
+                           "type":  "database",
+                           "label":  "videoPosts",
+                           "sublabel":  "Lista local: metadatos y rutas MP4",
+                           "pos":  [
+                                       1920,
+                                       590
+                                   ],
+                           "size":  [
+                                        240,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/shared/data/local_video_posts.dart",
+                                               "line":  1,
+                                               "end_line":  5
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "entity",
+                           "type":  "backend",
+                           "label":  "VideoPost",
+                           "sublabel":  "caption - videoUrl - likes - views",
+                           "pos":  [
+                                       1920,
+                                       350
+                                   ],
+                           "size":  [
+                                        230,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/domain/entities/video_post.dart",
+                                               "line":  1,
+                                               "end_line":  13
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "feed",
+                           "type":  "frontend",
+                           "label":  "VideoScrollableView",
+                           "sublabel":  "PageView vertical - controles",
+                           "pos":  [
+                                       1020,
+                                       130
+                                   ],
+                           "size":  [
+                                        220,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/presentation/shared/video_scrollable_view.dart",
+                                               "line":  8,
+                                               "end_line":  39
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "player",
+                           "type":  "frontend",
+                           "label":  "FullscreenPlayer",
+                           "sublabel":  "video_player - pausa - loop - caption",
+                           "pos":  [
+                                       1320,
+                                       130
+                                   ],
+                           "size":  [
+                                        245,
+                                        72
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/lib/presentation/widgets/video/fullscreen_player.dart",
+                                               "line":  5,
+                                               "end_line":  79
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "video_assets",
+                           "type":  "database",
+                           "label":  "Video assets",
+                           "sublabel":  "assets/videos/*.mp4 - declarados en pubspec",
+                           "pos":  [
+                                       1620,
+                                       130
+                                   ],
+                           "size":  [
+                                        250,
+                                        68
+                                    ],
+                           "sources":  [
+                                           {
+                                               "path":  "practica_04/toktik_app/pubspec.yaml",
+                                               "line":  57,
+                                               "end_line":  67
+                                           }
+                                       ]
+                       }
+                   ],
+    "boundaries":  [
+                       {
+                           "kind":  "region",
+                           "label":  "Plataformas Soportadas",
+                           "wraps":  [
+                                         "mobile",
+                                         "desktop",
+                                         "web"
+                                     ]
+                       }
+                   ],
+    "connections":  [
+                        {
+                            "id":  "mobile-runtime",
+                            "from":  "mobile",
+                            "to":  "runtime",
+                            "label":  "ejecuta app",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "desktop-runtime",
+                            "from":  "desktop",
+                            "to":  "runtime",
+                            "label":  "ejecuta app",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "web-runtime",
+                            "from":  "web",
+                            "to":  "runtime",
+                            "label":  "ejecuta app",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "runtime-discover",
+                            "from":  "runtime",
+                            "to":  "discover",
+                            "label":  "MaterialApp home",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "runtime-provider",
+                            "from":  "runtime",
+                            "to":  "provider",
+                            "label":  "crea provider y carga pagina 1",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "provider-discover",
+                            "from":  "provider",
+                            "to":  "discover",
+                            "label":  "estado observado",
+                            "variant":  "dashed"
+                        },
+                        {
+                            "id":  "provider-repo-contract",
+                            "from":  "provider",
+                            "to":  "repo_contract",
+                            "label":  "consulta trending",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "repo-contract-impl",
+                            "from":  "repo_contract",
+                            "to":  "repo_impl",
+                            "label":  "implementa"
+                        },
+                        {
+                            "id":  "impl-datasource",
+                            "from":  "repo_impl",
+                            "to":  "datasource",
+                            "label":  "delega"
+                        },
+                        {
+                            "id":  "datasource-posts",
+                            "from":  "datasource",
+                            "to":  "local_posts",
+                            "label":  "lee lista local"
+                        },
+                        {
+                            "id":  "datasource-entity",
+                            "from":  "datasource",
+                            "to":  "entity",
+                            "label":  "mapea a VideoPost"
+                        },
+                        {
+                            "id":  "entity-provider",
+                            "from":  "entity",
+                            "to":  "provider",
+                            "label":  "resultados - notifica UI",
+                            "variant":  "dashed",
+                            "fromSide":  "left",
+                            "toSide":  "left",
+                            "via":  [
+                                        [
+                                            280,
+                                            1529
+                                        ],
+                                        [
+                                            280,
+                                            731
+                                        ]
+                                    ]
+                        },
+                        {
+                            "id":  "discover-feed",
+                            "from":  "discover",
+                            "to":  "feed",
+                            "label":  "videos",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "feed-player",
+                            "from":  "feed",
+                            "to":  "player",
+                            "label":  "videoUrl y caption"
+                        },
+                        {
+                            "id":  "player-assets",
+                            "from":  "player",
+                            "to":  "video_assets",
+                            "label":  "carga asset",
+                            "variant":  "emphasis"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "dot":  "cyan",
+                      "title":  "Flujo principal",
+                      "items":  [
+                                    "Mobile, Desktop y Web conectan directamente con Flutter Runtime / Flutter App.",
+                                    "El runtime crea DiscoverProvider y DiscoverScreen; el estado alimenta el feed vertical."
+                                ]
+                  },
+                  {
+                      "dot":  "emerald",
+                      "title":  "Datos locales",
+                      "items":  [
+                                    "VideoPostRepository se implementa mediante VideoPostsRepositoryImpl y LocalVideoDatasource.",
+                                    "El datasource espera dos segundos, convierte los mapas locales en VideoPost y devuelve la lista al estado.",
+                                    "La consulta de favoritos sigue sin implementarse."
+                                ]
+                  },
+                  {
+                      "dot":  "violet",
+                      "title":  "Reproduccion multimedia",
+                      "items":  [
+                                    "FullscreenPlayer usa video_player, inicia en silencio y en loop, y alterna la reproduccion al tocar.",
+                                    "Los videos estan declarados como assets/videos en pubspec.yaml; la carpeta assets aparece sin seguimiento en el arbol de trabajo."
+                                ]
+                  }
+              ]
+}
