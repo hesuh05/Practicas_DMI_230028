@@ -17,8 +17,9 @@ dominio, infraestructura y presentación.
   y San Valentín (14 feb); los demás días usan el tema normal.
 - Selector de temporada y fecha de prueba persistido localmente. Una temporada
   elegida manualmente tiene prioridad sobre la fecha forzada.
-- El splash reproduce una breve melodía sintetizada y en bucle durante
-  Halloween y Navidad; no requiere archivos de audio adicionales.
+- El splash reproduce una breve melodía sintetizada y en bucle para cada tema;
+  no requiere archivos de audio adicionales. En Chrome, pulsa `Continuar` si
+  el navegador bloquea la reproducción automática.
 
 ## Credenciales de APIs
 
@@ -42,8 +43,9 @@ flutter run `
 ```
 
 Las claves son opcionales: sin ellas, los adaptadores reportan el error y el
-repositorio sigue con la siguiente fuente, terminando en los videos incluidos
-en `assets/videos/`.
+repositorio sigue con la siguiente fuente. Para usar el fallback local, agrega
+tus archivos MP4 en `assets/videos/` y declara esa carpeta en `pubspec.yaml`;
+este repositorio no incluye archivos de video pesados.
 
 ## Organización
 

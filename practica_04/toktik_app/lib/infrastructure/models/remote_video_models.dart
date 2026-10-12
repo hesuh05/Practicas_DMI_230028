@@ -28,10 +28,7 @@ class PixabayVideoMapper {
 
   static VideoPost fromJson(Map<String, dynamic> json) {
     final videoFiles = json['videos'] as Map<String, dynamic>? ?? const {};
-    final playableUrl = _findPlayableUrl(
-      videoFiles.values.toList(),
-      (file) => file['url'],
-    );
+    final playableUrl = _findPixabayPlayableUrl(videoFiles);
     if (playableUrl == null) {
       throw const FormatException('Pixabay video has no playable MP4 file.');
     }
@@ -46,6 +43,26 @@ class PixabayVideoMapper {
       source: 'pixabay',
     );
   }
+}
+
+String? _findPixabayPlayableUrl(Map<String, dynamic> videos) {
+  for (final quality in ['small', 'medium']) {
+    final file = videos[quality];
+    if (file is! Map<String, dynamic>) continue;
+    final width = (file['width'] as num?)?.toInt();
+    final height = (file['height'] as num?)?.toInt();
+    final url = file['url'];
+    if (width != null &&
+        height != null &&
+        width <= 1920 &&
+        height <= 1920 &&
+        url is String &&
+        url.startsWith('https://') &&
+        url.contains('.mp4')) {
+      return url;
+    }
+  }
+  return null;
 }
 
 class VimeoVideoMapper {
@@ -83,9 +100,25 @@ String? _findPlayableUrl(
 ) {
   final candidates = files
       .whereType<Map<String, dynamic>>()
-      .map((file) => readUrl(file))
-      .whereType<String>()
-      .where((url) => url.startsWith('https://') && url.contains('.mp4'))
+      .map(
+        (file) =>
+            (url: readUrl(file), width: (file['width'] as num?)?.toInt() ?? 0),
+      )
+      .where(
+        (candidate) =>
+            candidate.url is String &&
+            (candidate.url as String).startsWith('https://') &&
+            (candidate.url as String).contains('.mp4'),
+      )
       .toList();
-  return candidates.isEmpty ? null : candidates.first;
+  if (candidates.isEmpty) return null;
+
+  // Avoid selecting 4K AVC files that many Android hardware decoders reject.
+  final mobileCandidates = candidates.where((candidate) {
+    return candidate.width == 0 || candidate.width <= 1920;
+  }).toList();
+  if (mobileCandidates.isEmpty) return null;
+  final selected = mobileCandidates;
+  selected.sort((a, b) => b.width.compareTo(a.width));
+  return selected.first.url as String;
 }

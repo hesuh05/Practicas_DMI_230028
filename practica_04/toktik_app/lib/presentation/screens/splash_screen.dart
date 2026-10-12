@@ -28,26 +28,33 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(milliseconds: 1500), _finish);
-    _playSeasonalAudio();
+    _timer = Timer(const Duration(seconds: 3), _finish);
+    unawaited(_playSplashAudio());
   }
 
-  Future<void> _playSeasonalAudio() async {
+  Future<void> _playSplashAudio() async {
     final notes = switch (widget.season) {
       AppSeason.halloween => [146.83, 174.61, 155.56, 233.08, 146.83, 116.54],
       AppSeason.christmas => [261.63, 329.63, 392.00, 523.25, 392.00, 329.63],
-      _ => null,
+      AppSeason.valentines => [261.63, 293.66, 329.63, 392.00, 329.63, 293.66],
+      AppSeason.normal => [261.63, 329.63, 392.00, 523.25, 392.00, 329.63],
     };
-    if (notes == null) return;
     try {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      await _audioPlayer.setVolume(0.18);
+      await _audioPlayer.setVolume(0.35);
       await _audioPlayer.play(
         BytesSource(_makeWav(notes), mimeType: 'audio/wav'),
       );
     } on Exception catch (error, stackTrace) {
       debugPrint('Seasonal splash audio could not play: $error\n$stackTrace');
     }
+  }
+
+  Future<void> _continue() async {
+    // Chrome allows audio started from this button even when autoplay is blocked.
+    _timer?.cancel();
+    await _playSplashAudio();
+    _timer = Timer(const Duration(seconds: 3), _finish);
   }
 
   void _finish() {
@@ -76,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 20),
             const CircularProgressIndicator(strokeWidth: 2),
             const SizedBox(height: 12),
-            TextButton(onPressed: _finish, child: const Text('Continuar')),
+            TextButton(onPressed: _continue, child: const Text('Continuar')),
           ],
         ),
       ),
