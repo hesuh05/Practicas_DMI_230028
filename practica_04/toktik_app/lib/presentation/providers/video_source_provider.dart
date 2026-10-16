@@ -5,16 +5,26 @@ import 'package:toktik/domain/datasources/video_posts_datasource.dart';
 import 'package:toktik/infrastructure/datasources/shared_preferences_video_store.dart';
 import 'package:toktik/infrastructure/repositories/video_posts_repository_impl.dart';
 
-enum VideoSourceMode { random, coverr, pixabay, internetArchive, local }
+enum VideoSourceFeed { discover, forYou }
+
+enum VideoSourceMode {
+  random,
+  rotating,
+  coverr,
+  pixabay,
+  internetArchive,
+  local,
+}
 
 extension VideoSourceModeLabel on VideoSourceMode {
   String get label => switch (this) {
-        VideoSourceMode.random => 'Aleatorio',
-        VideoSourceMode.coverr => 'Coverr',
-        VideoSourceMode.pixabay => 'Pixabay',
-        VideoSourceMode.internetArchive => 'Internet Archive',
-        VideoSourceMode.local => 'Local',
-      };
+    VideoSourceMode.random => 'Aleatorio',
+    VideoSourceMode.rotating => 'Rotatorio',
+    VideoSourceMode.coverr => 'Coverr',
+    VideoSourceMode.pixabay => 'Pixabay',
+    VideoSourceMode.internetArchive => 'Internet Archive',
+    VideoSourceMode.local => 'Local',
+  };
 }
 
 class VideoSourceProvider extends ChangeNotifier {
@@ -27,24 +37,29 @@ class VideoSourceProvider extends ChangeNotifier {
   final SharedPreferencesVideoStore localStore;
   final List<VideoPostsRepositoryImpl> repositories;
   final Map<VideoSourceMode, VideoPostDatasource> sources;
-  VideoSourceMode _mode = VideoSourceMode.random;
+  final Map<VideoSourceFeed, VideoSourceMode> _modes = {
+    VideoSourceFeed.discover: VideoSourceMode.random,
+    VideoSourceFeed.forYou: VideoSourceMode.random,
+  };
   String? _notice;
 
-  VideoSourceMode get mode => _mode;
+  VideoSourceMode modeFor(VideoSourceFeed feed) => _modes[feed]!;
   String? get notice => _notice;
 
   Future<void> load() async {
-    final saved = await localStore.getVideoSourceMode();
-    _mode = VideoSourceMode.values.firstWhere(
-      (mode) => mode.name == saved,
-      orElse: () => VideoSourceMode.random,
-    );
+    for (final feed in VideoSourceFeed.values) {
+      final saved = await localStore.getVideoSourceModeForFeed(feed.name);
+      final legacy = saved == null
+          ? await localStore.getVideoSourceMode()
+          : null;
+      _modes[feed] = _parseMode(saved ?? legacy);
+    }
     _applyOrder();
   }
 
-  Future<void> select(VideoSourceMode mode) async {
-    await localStore.saveVideoSourceMode(mode.name);
-    _mode = mode;
+  Future<void> select(VideoSourceFeed feed, VideoSourceMode mode) async {
+    await localStore.saveVideoSourceModeForFeed(feed.name, mode.name);
+    _modes[feed] = mode;
     _applyOrder();
     notifyListeners();
   }
@@ -60,22 +75,36 @@ class VideoSourceProvider extends ChangeNotifier {
   }
 
   void _applyOrder() {
-    final orderedModes = <VideoSourceMode>[
-      if (_mode != VideoSourceMode.random) _mode,
-      ...VideoSourceMode.values.where(
-        (mode) => mode != VideoSourceMode.random && mode != _mode,
-      ),
-    ];
-    if (_mode == VideoSourceMode.random) {
-      orderedModes.shuffle(Random());
-    }
-    for (final repository in repositories) {
+    for (var index = 0; index < repositories.length; index++) {
+      final repository = repositories[index];
+      final mode = _modes[VideoSourceFeed.values[index]]!;
+      final orderedModes = <VideoSourceMode>[
+        if (mode != VideoSourceMode.random && mode != VideoSourceMode.rotating)
+          mode,
+        ...VideoSourceMode.values.where(
+          (mode) =>
+              mode != VideoSourceMode.random &&
+              mode != VideoSourceMode.rotating &&
+              mode != _modes[VideoSourceFeed.values[index]],
+        ),
+      ]..shuffle(Random());
+      if (mode != VideoSourceMode.random && mode != VideoSourceMode.rotating) {
+        orderedModes.remove(mode);
+        orderedModes.insert(0, mode);
+      }
       final orderedSources = <VideoPostDatasource>[];
       for (final mode in orderedModes) {
         final source = sources[mode];
         if (source != null) orderedSources.add(source);
       }
       repository.setDataSources(orderedSources);
+      repository.setRotatingDataSources(mode == VideoSourceMode.rotating);
     }
   }
+
+  VideoSourceMode _parseMode(String? value) =>
+      VideoSourceMode.values.firstWhere(
+        (mode) => mode.name == value,
+        orElse: () => VideoSourceMode.random,
+      );
 }
