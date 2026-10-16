@@ -152,12 +152,12 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         }
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            GestureDetector(
-              onTap: _togglePlayback,
-              child: ClipRect(
+        return GestureDetector(
+          onTap: _togglePlayback,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              ClipRect(
                 child: FittedBox(
                   fit: BoxFit.cover,
                   child: SizedBox(
@@ -167,31 +167,31 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
                   ),
                 ),
               ),
-            ),
-            VideoBackground(
-              colors: [Colors.transparent, Colors.black87],
-              stops: [0.48, 1],
-            ),
-            ValueListenableBuilder<bool>(
-              valueListenable: widget.controls.playing,
-              builder: (context, isPlaying, _) => isPlaying
-                  ? const SizedBox.shrink()
-                  : Center(
-                      child: IconButton.filledTonal(
-                        tooltip: 'Reproducir',
-                        onPressed: _togglePlayback,
-                        iconSize: 52,
-                        icon: const Icon(Icons.play_arrow),
+              VideoBackground(
+                colors: [Colors.transparent, Colors.black87],
+                stops: [0.48, 1],
+              ),
+              ValueListenableBuilder<bool>(
+                valueListenable: widget.controls.playing,
+                builder: (context, isPlaying, _) => isPlaying
+                    ? const SizedBox.shrink()
+                    : Center(
+                        child: IconButton.filledTonal(
+                          tooltip: 'Reproducir',
+                          onPressed: _togglePlayback,
+                          iconSize: 52,
+                          icon: const Icon(Icons.play_arrow),
+                        ),
                       ),
-                    ),
-            ),
-            Positioned(
-              bottom: 24,
-              left: 20,
-              right: 88,
-              child: _VideoCaption(caption: widget.video.caption),
-            ),
-          ],
+              ),
+              Positioned(
+                bottom: 24,
+                left: 20,
+                right: 88,
+                child: _VideoCaption(caption: widget.video.caption),
+              ),
+            ],
+          ),
         );
       },
     );
