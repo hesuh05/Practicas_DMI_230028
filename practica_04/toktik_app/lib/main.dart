@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -14,6 +16,7 @@ import 'package:toktik/infrastructure/repositories/video_posts_repository_impl.d
 import 'package:toktik/presentation/providers/discover_provider.dart';
 import 'package:toktik/presentation/providers/season_provider.dart';
 import 'package:toktik/presentation/providers/video_source_provider.dart';
+import 'package:toktik/presentation/services/app_icon_service.dart';
 import 'package:toktik/presentation/screens/splash_screen.dart';
 import 'package:toktik/presentation/screens/video_sections_screen.dart';
 
@@ -31,11 +34,11 @@ Future<void> main() async {
     final localVideos = LocalVideoDatasource();
     final coverr = CoverrVideoDatasource(
       client: client,
-      apiKey: ApiConfig.coverrApiKey,
+      apiKey: "b6d9a1666e874fa7b83caaf084168954",
     );
     final pixabay = PixabayVideoDatasource(
       client: client,
-      apiKey: ApiConfig.pixabayApiKey,
+      apiKey: ApiConfig."58005090-366c8ee1e16684b518c8ab417",
     );
     final internetArchive = InternetArchiveVideoDatasource(
       client: client,
@@ -119,6 +122,16 @@ class TokTikApp extends StatefulWidget {
 
 class _TokTikAppState extends State<TokTikApp> {
   bool _showSplash = true;
+  AppSeason? _lastIconSeason;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final season = context.read<SeasonProvider>().season;
+    if (_lastIconSeason == season) return;
+    _lastIconSeason = season;
+    unawaited(AppIconService.setSeason(season));
+  }
 
   @override
   Widget build(BuildContext context) {
