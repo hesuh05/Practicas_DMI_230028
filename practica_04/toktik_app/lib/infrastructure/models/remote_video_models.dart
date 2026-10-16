@@ -1,5 +1,10 @@
 import 'package:toktik/domain/entities/video_post.dart';
 
+int _asInt(Object? value) {
+  if (value is num) return value.toInt();
+  return int.tryParse('$value') ?? 0;
+}
+
 class CoverrVideoMapper {
   const CoverrVideoMapper._();
 
@@ -25,7 +30,7 @@ class CoverrVideoMapper {
       caption: json['title'] as String? ?? 'Video de Coverr',
       videoUrl: playableUrl as String,
       likes: 0,
-      views: (json['views'] as num?)?.toInt() ?? 0,
+      views: _asInt(json['views'] ?? json['view_count'] ?? json['downloads']),
       source: 'coverr',
     );
   }
@@ -46,8 +51,8 @@ class PixabayVideoMapper {
           ? json['tags'] as String
           : 'Video de Pixabay',
       videoUrl: playableUrl,
-      likes: (json['likes'] as num?)?.toInt() ?? 0,
-      views: (json['views'] as num?)?.toInt() ?? 0,
+      likes: _asInt(json['likes']),
+      views: _asInt(json['views'] ?? json['view_count']),
       source: 'pixabay',
     );
   }
@@ -95,10 +100,5 @@ class InternetArchiveVideoMapper {
       views: _asInt(json['downloads']),
       source: 'internet_archive',
     );
-  }
-
-  static int _asInt(Object? value) {
-    if (value is num) return value.toInt();
-    return int.tryParse('$value') ?? 0;
   }
 }

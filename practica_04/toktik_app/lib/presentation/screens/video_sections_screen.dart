@@ -43,7 +43,8 @@ class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
     if (notice == null || !mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(notice)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(notice)));
       provider.clearNotice();
     });
   }
@@ -78,7 +79,9 @@ class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
             icon: const Icon(Icons.tune),
           ),
           IconButton(
-            tooltip: 'Fuente de videos: ${sourceProvider.mode.label}',
+            tooltip:
+                'Fuentes: Discover ${sourceProvider.modeFor(VideoSourceFeed.discover).label}, '
+                'For You ${sourceProvider.modeFor(VideoSourceFeed.forYou).label}',
             onPressed: _openVideoSourceSettings,
             icon: const Icon(Icons.cloud_queue),
           ),
@@ -131,12 +134,18 @@ class _VideoSectionsScreenState extends State<VideoSectionsScreen> {
 
   Future<void> _openVideoSourceSettings() async {
     final provider = context.read<VideoSourceProvider>();
-    final previousMode = provider.mode;
+    final previousModes = VideoSourceFeed.values.map(provider.modeFor).toList();
     await showDialog<void>(
       context: context,
       builder: (context) => VideoSourceSettingsDialog(provider: provider),
     );
-    if (!mounted || provider.mode == previousMode) return;
+    final modesChanged = VideoSourceFeed.values
+        .map(provider.modeFor)
+        .toList()
+        .asMap()
+        .entries
+        .any((entry) => entry.value != previousModes[entry.key]);
+    if (!mounted || !modesChanged) return;
     await Future.wait([
       context.read<DiscoverProvider>().reload(),
       context.read<ForYouProvider>().reload(),

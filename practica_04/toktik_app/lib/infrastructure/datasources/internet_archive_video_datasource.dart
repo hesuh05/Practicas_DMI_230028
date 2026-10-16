@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
 import 'package:toktik/domain/datasources/video_posts_datasource.dart';
@@ -6,17 +7,29 @@ import 'package:toktik/domain/entities/video_post.dart';
 import 'package:toktik/infrastructure/models/remote_video_models.dart';
 
 class InternetArchiveVideoDatasource implements VideoPostDatasource {
-  const InternetArchiveVideoDatasource({required this.client});
+  InternetArchiveVideoDatasource({required this.client});
 
   final http.Client client;
+  final Map<int, Future<List<VideoPost>>> _pageRequests = {};
 
   @override
   Future<List<VideoPost>> getTrendingVideosByPage(int page) =>
-      _fetch(page, 'mediatype:movies');
+      _fetchShared(page);
 
   @override
-  Future<List<VideoPost>> getForYouVideosByPage(int page) =>
-      _fetch(page, 'mediatype:movies');
+  Future<List<VideoPost>> getForYouVideosByPage(int page) => _fetchShared(page);
+
+  Future<List<VideoPost>> _fetchShared(int page) {
+    final existing = _pageRequests[page];
+    if (existing != null) return existing;
+    final request = _fetch(page, 'mediatype:movies');
+    _pageRequests[page] = request;
+    return request.whenComplete(() {
+      if (identical(_pageRequests[page], request)) {
+        _pageRequests.remove(page);
+      }
+    });
+  }
 
   Future<List<VideoPost>> _fetch(int page, String query) async {
     final searchResponse = await client
@@ -74,7 +87,14 @@ class InternetArchiveVideoDatasource implements VideoPostDatasource {
         'file_width': file['width'],
         'file_height': file['height'],
       });
-    } on FormatException {
+    } on Object catch (error, stackTrace) {
+      developer.log(
+        'Skipping unavailable Internet Archive item $identifier.',
+        name: 'TokTik.InternetArchiveVideoDatasource',
+        error: error,
+        stackTrace: stackTrace,
+        level: 900,
+      );
       return null;
     }
   }

@@ -157,20 +157,25 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
           children: [
             GestureDetector(
               onTap: _togglePlayback,
-              child: ClipRect(
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: _controller.value.size.width,
-                    height: _controller.value.size.height,
-                    child: VideoPlayer(_controller),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRect(
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _controller.value.size.width,
+                        height: _controller.value.size.height,
+                        child: VideoPlayer(_controller),
+                      ),
+                    ),
                   ),
-                ),
+                  VideoBackground(
+                    colors: [Colors.transparent, Colors.black87],
+                    stops: [0.48, 1],
+                  ),
+                ],
               ),
-            ),
-            VideoBackground(
-              colors: [Colors.transparent, Colors.black87],
-              stops: [0.48, 1],
             ),
             ValueListenableBuilder<bool>(
               valueListenable: widget.controls.playing,
