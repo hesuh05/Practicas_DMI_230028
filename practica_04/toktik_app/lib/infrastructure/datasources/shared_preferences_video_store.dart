@@ -13,6 +13,9 @@ class SharedPreferencesVideoStore implements VideoPostLocalStore {
   static const _seasonOverrideKey = 'toktik.season_override';
   static const _forcedDateKey = 'toktik.forced_date';
   static const _videoSourceModeKey = 'toktik.video_source_mode';
+  static const _discoverVideoSourceModeKey =
+      'toktik.discover_video_source_mode';
+  static const _forYouVideoSourceModeKey = 'toktik.for_you_video_source_mode';
 
   @override
   Future<Map<String, VideoPost>> getSavedPosts() async {
@@ -82,5 +85,23 @@ class SharedPreferencesVideoStore implements VideoPostLocalStore {
   Future<void> saveVideoSourceMode(String mode) async {
     final didSave = await preferences.setString(_videoSourceModeKey, mode);
     if (!didSave) throw StateError('Could not save the video source mode.');
+  }
+
+  Future<String?> getVideoSourceModeForFeed(String feed) async {
+    return preferences.getString(
+      feed == 'discover'
+          ? _discoverVideoSourceModeKey
+          : _forYouVideoSourceModeKey,
+    );
+  }
+
+  Future<void> saveVideoSourceModeForFeed(String feed, String mode) async {
+    final didSave = await preferences.setString(
+      feed == 'discover'
+          ? _discoverVideoSourceModeKey
+          : _forYouVideoSourceModeKey,
+      mode,
+    );
+    if (!didSave) throw StateError('Could not save the $feed video source mode.');
   }
 }
