@@ -38,7 +38,7 @@ Future<void> main() async {
     );
     final pixabay = PixabayVideoDatasource(
       client: client,
-      apiKey: ApiConfig."58005090-366c8ee1e16684b518c8ab417",
+      apiKey: "58005090-366c8ee1e16684b518c8ab417",
     );
     final internetArchive = InternetArchiveVideoDatasource(
       client: client,
