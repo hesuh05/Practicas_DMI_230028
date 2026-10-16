@@ -1,6 +1,10 @@
 List<Map<String, dynamic>> videoPosts = [
   {
-    'name': 'Subiendo escaleras automáticas',
+    'name':
+        'Subiendo escaleras automáticas. Este texto largo sirve para probar '
+        'que la descripción se pueda expandir y desplazarse verticalmente '
+        'sin cubrir los controles del video. Puedes seguir leyendo hasta el '
+        'final para comprobar el comportamiento del scroll.',
     'videoUrl': 'assets/videos/1.mp4',
     'likes': 23230,
     'views': 1523,

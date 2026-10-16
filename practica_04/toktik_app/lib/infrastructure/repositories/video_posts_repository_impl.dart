@@ -14,9 +14,17 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
   List<VideoPostDatasource> videoDatasources;
   final VideoPostLocalStore localStore;
   void Function(String message)? onFallback;
+  bool _rotateDataSources = false;
+  int _rotationOffset = 0;
 
   void setDataSources(List<VideoPostDatasource> datasources) {
     videoDatasources = datasources;
+    _rotationOffset = 0;
+  }
+
+  void setRotatingDataSources(bool value) {
+    _rotateDataSources = value;
+    _rotationOffset = 0;
   }
 
   @override
@@ -43,10 +51,32 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
     Future<List<VideoPost>> Function(VideoPostDatasource) load,
   ) async {
     final failures = <Object>[];
-    for (final datasource in videoDatasources) {
+    if (videoDatasources.isEmpty) {
+      throw const VideoDataSourcesException([]);
+    }
+    final startOffset = _rotateDataSources
+        ? _rotationOffset % videoDatasources.length
+        : 0;
+    final orderedDatasources = List<VideoPostDatasource>.generate(
+      videoDatasources.length,
+      (index) =>
+          videoDatasources[(startOffset + index) % videoDatasources.length],
+    );
+    for (var index = 0; index < orderedDatasources.length; index++) {
+      final datasource = orderedDatasources[index];
       try {
         final posts = await load(datasource);
         if (posts.isNotEmpty) {
+          if (_rotateDataSources) {
+            _rotationOffset =
+                (startOffset + index + 1) % videoDatasources.length;
+          }
+          if (index > 0) {
+            onFallback?.call(
+              '${orderedDatasources.first.runtimeType} no estuvo disponible; '
+              'se usó ${datasource.runtimeType}.',
+            );
+          }
           return await _applySavedState(posts);
         }
         final error = StateError(
@@ -60,9 +90,6 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
           error: error,
           level: 900,
         );
-        onFallback?.call(
-          '${datasource.runtimeType} no devolvió videos; se intentará otra fuente.',
-        );
       } catch (error, stackTrace) {
         failures.add(error);
         developer.log(
@@ -72,12 +99,12 @@ class VideoPostsRepositoryImpl implements VideoPostRepository {
           stackTrace: stackTrace,
           level: 900,
         );
-        onFallback?.call(
-          '${datasource.runtimeType} falló: $error. '
-          'Se intentará otra fuente.',
-        );
       }
     }
+    onFallback?.call(
+      '${orderedDatasources.first.runtimeType} y sus fuentes alternativas '
+      'no pudieron cargar videos.',
+    );
     throw VideoDataSourcesException(failures);
   }
 

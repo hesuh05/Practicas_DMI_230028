@@ -5,11 +5,19 @@ import 'package:toktik/domain/datasources/video_posts_datasource.dart';
 import 'package:toktik/infrastructure/datasources/shared_preferences_video_store.dart';
 import 'package:toktik/infrastructure/repositories/video_posts_repository_impl.dart';
 
-enum VideoSourceMode { random, coverr, pixabay, internetArchive, local }
+enum VideoSourceMode {
+  random,
+  rotating,
+  coverr,
+  pixabay,
+  internetArchive,
+  local,
+}
 
 extension VideoSourceModeLabel on VideoSourceMode {
   String get label => switch (this) {
         VideoSourceMode.random => 'Aleatorio',
+        VideoSourceMode.rotating => 'Rotatorio',
         VideoSourceMode.coverr => 'Coverr',
         VideoSourceMode.pixabay => 'Pixabay',
         VideoSourceMode.internetArchive => 'Internet Archive',
@@ -60,22 +68,29 @@ class VideoSourceProvider extends ChangeNotifier {
   }
 
   void _applyOrder() {
-    final orderedModes = <VideoSourceMode>[
-      if (_mode != VideoSourceMode.random) _mode,
-      ...VideoSourceMode.values.where(
-        (mode) => mode != VideoSourceMode.random && mode != _mode,
-      ),
-    ];
-    if (_mode == VideoSourceMode.random) {
-      orderedModes.shuffle(Random());
-    }
     for (final repository in repositories) {
+      final orderedModes = <VideoSourceMode>[
+        if (_mode != VideoSourceMode.random && _mode != VideoSourceMode.rotating)
+          _mode,
+        ...VideoSourceMode.values.where(
+          (mode) =>
+              mode != VideoSourceMode.random &&
+              mode != VideoSourceMode.rotating &&
+              mode != _mode,
+        ),
+      ]..shuffle(Random());
+      if (_mode != VideoSourceMode.random &&
+          _mode != VideoSourceMode.rotating) {
+        orderedModes.remove(_mode);
+        orderedModes.insert(0, _mode);
+      }
       final orderedSources = <VideoPostDatasource>[];
       for (final mode in orderedModes) {
         final source = sources[mode];
         if (source != null) orderedSources.add(source);
       }
       repository.setDataSources(orderedSources);
+      repository.setRotatingDataSources(_mode == VideoSourceMode.rotating);
     }
   }
 }
