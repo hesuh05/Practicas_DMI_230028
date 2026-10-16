@@ -79,13 +79,6 @@ class _SplashScreenState extends State<SplashScreen> {
     AppSeason.valentines => 'lib/assets/flip_san_valentin.png',
   };
 
-  Future<void> _continue() async {
-    // Chrome allows audio started from this button even when autoplay is blocked.
-    _timer?.cancel();
-    await _playSplashAudio();
-    _timer = Timer(const Duration(seconds: 3), _finish);
-  }
-
   void _finish() {
     if (_finishing || !mounted) return;
     _finishing = true;
@@ -110,8 +103,6 @@ class _SplashScreenState extends State<SplashScreen> {
             Text('flip', style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 20),
             const CircularProgressIndicator(strokeWidth: 2),
-            const SizedBox(height: 12),
-            TextButton(onPressed: _continue, child: const Text('Continuar')),
           ],
         ),
       ),
