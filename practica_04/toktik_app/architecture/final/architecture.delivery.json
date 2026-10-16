@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "receiptId": "ac01b113-561d-4e5a-a136-098833ce1e5a",
+  "receiptId": "8e583859-fee3-482c-9148-2dce655d204c",
   "status": "current",
   "command": "deliver",
   "type": "architecture",
   "input": "C:\\Users\\Chucho\\Downloads\\git\\hesuh05\\Practicas_DMI_230028\\practica_04\\toktik_app\\architecture\\final\\candidate.json",
   "output": "C:\\Users\\Chucho\\Downloads\\git\\hesuh05\\Practicas_DMI_230028\\practica_04\\toktik_app\\architecture\\final\\architecture.html",
   "specification": {
-    "sha256": "e3c57356e77837cdbe96e1a4a1bdd68181d4bdda22a885bd4a635c989afd41a5",
-    "bytes": 6867
+    "sha256": "c4a67fdc397da6e7121ffd5938e4883b701a1dc33458ed75ced72c4f4c18649c",
+    "bytes": 7188
   },
   "artifact": {
-    "sha256": "a43ba8dedc86c4c32743079bf8c5075f809001c7713ab706c499366f66e250c4",
-    "bytes": 766783
+    "sha256": "14543542dd3dbf94749e761d52dba6474754eaf66c7bc9c3855de5c59b3bbebb",
+    "bytes": 766843
   }
 }
