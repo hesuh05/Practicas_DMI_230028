@@ -18,28 +18,40 @@ class _VideoSourceSettingsDialogState extends State<VideoSourceSettingsDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Fuente de videos'),
-      content: DropdownButtonFormField<VideoSourceMode>(
-        initialValue: widget.provider.mode,
-        decoration: const InputDecoration(
-          labelText: 'Fuente preferida',
-          helperText: 'Si falla, se probarán las demás fuentes.',
-        ),
-        items: VideoSourceMode.values
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: VideoSourceFeed.values
             .map(
-              (mode) => DropdownMenuItem(value: mode, child: Text(mode.label)),
+              (feed) => DropdownButtonFormField<VideoSourceMode>(
+                initialValue: widget.provider.modeFor(feed),
+                decoration: InputDecoration(
+                  labelText: feed == VideoSourceFeed.discover
+                      ? 'Discover'
+                      : 'For You',
+                  helperText: 'Si falla, se probarán las demás fuentes.',
+                ),
+                items: VideoSourceMode.values
+                    .map(
+                      (mode) => DropdownMenuItem(
+                        value: mode,
+                        child: Text(mode.label),
+                      ),
+                    )
+                    .toList(),
+                onChanged: _saving
+                    ? null
+                    : (mode) async {
+                        if (mode == null) return;
+                        setState(() => _saving = true);
+                        try {
+                          await widget.provider.select(feed, mode);
+                        } finally {
+                          if (mounted) setState(() => _saving = false);
+                        }
+                      },
+              ),
             )
             .toList(),
-        onChanged: _saving
-            ? null
-            : (mode) async {
-                if (mode == null) return;
-                setState(() => _saving = true);
-                try {
-                  await widget.provider.select(mode);
-                } finally {
-                  if (mounted) setState(() => _saving = false);
-                }
-              },
       ),
       actions: [
         if (_saving)
