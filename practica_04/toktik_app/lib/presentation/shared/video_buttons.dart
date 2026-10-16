@@ -101,8 +101,12 @@ class _CustomIconButton extends StatelessWidget {
           onPressed: onPressed,
           icon: Icon(iconData, color: iconColor, size: 30),
         ),
-        if (value != null && value! > 0)
-          Text(HumanFormats.humanReadableNumber(value!.toDouble())),
+        SizedBox(
+          height: 20,
+          child: value != null && value! > 0
+              ? Text(HumanFormats.humanReadableNumber(value!.toDouble()))
+              : null,
+        ),
       ],
     );
   }
