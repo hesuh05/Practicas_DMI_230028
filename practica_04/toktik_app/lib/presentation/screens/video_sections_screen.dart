@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toktik/config/theme/app_theme.dart';
+import 'package:toktik/domain/datasources/video_post_local_store.dart';
 import 'package:toktik/presentation/providers/discover_provider.dart';
 import 'package:toktik/presentation/providers/season_provider.dart';
 import 'package:toktik/presentation/providers/video_source_provider.dart';
@@ -244,6 +245,44 @@ class _SeasonSettingsDialogState extends State<_SeasonSettingsDialog> {
                 }
               },
             ),
+            if (provider.season == AppSeason.halloween) ...[
+              const SizedBox(height: 12),
+              DropdownButtonFormField<HalloweenSongChoice>(
+                initialValue: provider.halloweenSongChoice,
+                decoration: const InputDecoration(
+                  labelText: 'Canción de Halloween en la pantalla de carga',
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: HalloweenSongChoice.original,
+                    child: Text('Halloween original'),
+                  ),
+                  DropdownMenuItem(
+                    value: HalloweenSongChoice.halloweenSong,
+                    child: Text('Halloween song'),
+                  ),
+                ],
+                onChanged: (choice) async {
+                  if (choice == null) return;
+                  setState(() => _saving = true);
+                  try {
+                    await provider.selectHalloweenSong(choice);
+                  } on Object catch (error) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'No se pudo guardar la canción: $error',
+                          ),
+                        ),
+                      );
+                    }
+                  } finally {
+                    if (mounted) setState(() => _saving = false);
+                  }
+                },
+              ),
+            ],
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: _selectDate,

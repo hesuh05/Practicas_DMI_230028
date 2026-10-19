@@ -1,5 +1,7 @@
 import 'package:toktik/domain/entities/video_post.dart';
 
+enum HalloweenSongChoice { original, halloweenSong }
+
 abstract class VideoPostLocalStore {
   Future<Map<String, VideoPost>> getSavedPosts();
 
@@ -15,8 +17,13 @@ abstract class VideoPostLocalStore {
 }
 
 class SeasonPreferences {
-  const SeasonPreferences({this.seasonOverride, this.forcedDate});
+  const SeasonPreferences({
+    this.seasonOverride,
+    this.forcedDate,
+    this.halloweenSongChoice = HalloweenSongChoice.original,
+  });
 
   final String? seasonOverride;
   final DateTime? forcedDate;
+  final HalloweenSongChoice halloweenSongChoice;
 }
