@@ -8,11 +8,13 @@ class SeasonProvider extends ChangeNotifier {
   final VideoPostLocalStore localStore;
   AppSeason? _seasonOverride;
   DateTime? _forcedDate;
+  HalloweenSongChoice _halloweenSongChoice = HalloweenSongChoice.original;
 
   AppSeason get season =>
       _seasonOverride ?? AppTheme.seasonForDate(_forcedDate ?? DateTime.now());
   AppSeason? get seasonOverride => _seasonOverride;
   DateTime? get forcedDate => _forcedDate;
+  HalloweenSongChoice get halloweenSongChoice => _halloweenSongChoice;
 
   Future<void> load() async {
     final preferences = await localStore.getSeasonPreferences();
@@ -24,6 +26,7 @@ class SeasonProvider extends ChangeNotifier {
     }
     _seasonOverride = seasonOverride;
     _forcedDate = preferences.forcedDate;
+    _halloweenSongChoice = preferences.halloweenSongChoice;
     notifyListeners();
   }
 
@@ -31,6 +34,7 @@ class SeasonProvider extends ChangeNotifier {
     final updated = SeasonPreferences(
       seasonOverride: season?.name,
       forcedDate: _forcedDate,
+      halloweenSongChoice: _halloweenSongChoice,
     );
     await localStore.saveSeasonPreferences(updated);
     _seasonOverride = season;
@@ -40,10 +44,24 @@ class SeasonProvider extends ChangeNotifier {
   Future<void> selectDate(DateTime? date) async {
     final updated = SeasonPreferences(
       seasonOverride: _seasonOverride?.name,
-      forcedDate: date == null ? null : DateTime(date.year, date.month, date.day),
+      forcedDate: date == null
+          ? null
+          : DateTime(date.year, date.month, date.day),
+      halloweenSongChoice: _halloweenSongChoice,
     );
     await localStore.saveSeasonPreferences(updated);
     _forcedDate = updated.forcedDate;
+    notifyListeners();
+  }
+
+  Future<void> selectHalloweenSong(HalloweenSongChoice choice) async {
+    final updated = SeasonPreferences(
+      seasonOverride: _seasonOverride?.name,
+      forcedDate: _forcedDate,
+      halloweenSongChoice: choice,
+    );
+    await localStore.saveSeasonPreferences(updated);
+    _halloweenSongChoice = choice;
     notifyListeners();
   }
 
@@ -51,6 +69,7 @@ class SeasonProvider extends ChangeNotifier {
     await localStore.saveSeasonPreferences(const SeasonPreferences());
     _seasonOverride = null;
     _forcedDate = null;
+    _halloweenSongChoice = HalloweenSongChoice.original;
     notifyListeners();
   }
 
