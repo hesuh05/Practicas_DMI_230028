@@ -5,71 +5,131 @@ import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:toktik/config/theme/app_theme.dart';
+import 'package:toktik/domain/datasources/video_post_local_store.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
     required this.season,
+    required this.halloweenSongChoice,
     required this.onFinished,
     super.key,
   });
 
   final AppSeason season;
+  final HalloweenSongChoice halloweenSongChoice;
   final VoidCallback onFinished;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  late final AnimationController _logoController;
+  late final Animation<double> _logoOpacity;
   Timer? _timer;
   bool _finishing = false;
+  int _startGeneration = 0;
 
   @override
   void initState() {
     super.initState();
+    _logoController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+    _logoOpacity = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0, end: 1), weight: 20),
+      TweenSequenceItem(tween: ConstantTween(1), weight: 60),
+      TweenSequenceItem(tween: Tween(begin: 1, end: 0), weight: 20),
+    ]).animate(_logoController);
     _audioPlayer.audioCache = AudioCache(prefix: '');
-    _timer = Timer(const Duration(seconds: 3), _finish);
-    unawaited(_playSplashAudio());
+    unawaited(_startSplash());
   }
 
-  Future<void> _playSplashAudio() async {
+  @override
+  void didUpdateWidget(covariant SplashScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.season != widget.season ||
+        oldWidget.halloweenSongChoice != widget.halloweenSongChoice) {
+      unawaited(_startSplash());
+    }
+  }
+
+  Future<void> _startSplash() async {
+    final generation = ++_startGeneration;
+    _timer?.cancel();
+    _finishing = false;
+    _logoController
+      ..stop()
+      ..reset();
+
     try {
       await _audioPlayer.stop();
       await _audioPlayer.setReleaseMode(ReleaseMode.release);
       await _audioPlayer.setVolume(0.8);
       final audioAsset = switch (widget.season) {
-        AppSeason.halloween => 'lib/assets/audio/halloween.mp3',
+        AppSeason.halloween => switch (widget.halloweenSongChoice) {
+          HalloweenSongChoice.original => 'lib/assets/audio/halloween.mp3',
+          HalloweenSongChoice.halloweenSong =>
+            'lib/assets/audio/halloween_song.mp3',
+        },
         AppSeason.christmas => 'lib/assets/audio/christmas.mp3',
         AppSeason.valentines => 'lib/assets/audio/valentine.mp3',
         AppSeason.normal => null,
       };
+      late final Duration duration;
       if (audioAsset == null) {
-        await _audioPlayer.play(
-          BytesSource(
-            _makeWav([
-              261.63,
-              329.63,
-              392.00,
-              523.25,
-              392.00,
-              329.63,
-              293.66,
-              349.23,
-              440.00,
-              523.25,
-              440.00,
-              349.23,
-            ]),
-            mimeType: 'audio/wav',
-          ),
+        final source = BytesSource(
+          _makeWav([
+            261.63,
+            329.63,
+            392.00,
+            523.25,
+            392.00,
+            329.63,
+            293.66,
+            349.23,
+            440.00,
+            523.25,
+            440.00,
+            349.23,
+          ]),
+          mimeType: 'audio/wav',
         );
+        await _audioPlayer.setSource(source);
+        duration =
+            await _audioPlayer.getDuration() ??
+            const Duration(milliseconds: 3600);
       } else {
+        final durationFuture = _waitForDuration(generation);
         await _audioPlayer.play(AssetSource(audioAsset));
+        duration = await durationFuture ?? const Duration(seconds: 3);
       }
+      if (generation != _startGeneration || !mounted) return;
+      if (audioAsset == null) {
+        await _audioPlayer.resume();
+      }
+      _logoController.duration = duration;
+      unawaited(_logoController.forward());
+      _timer = Timer(duration, _finish);
     } on Exception catch (error, stackTrace) {
       debugPrint('Seasonal splash audio could not play: $error\n$stackTrace');
+      if (generation == _startGeneration && mounted) {
+        _logoController.duration = const Duration(seconds: 3);
+        unawaited(_logoController.forward());
+        _timer = Timer(const Duration(seconds: 3), _finish);
+      }
     }
+  }
+
+  Future<Duration?> _waitForDuration(int generation) async {
+    final duration = await _audioPlayer.onDurationChanged
+        .firstWhere((duration) => duration > Duration.zero)
+        .timeout(const Duration(seconds: 2), onTimeout: () => Duration.zero);
+    if (generation != _startGeneration) return null;
+    return duration == Duration.zero ? null : duration;
   }
 
   String _seasonAsset(AppSeason season) => switch (season) {
@@ -93,11 +153,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              _seasonAsset(widget.season),
-              width: 104,
-              height: 104,
-              fit: BoxFit.contain,
+            FadeTransition(
+              opacity: _logoOpacity,
+              child: Image.asset(
+                _seasonAsset(widget.season),
+                width: 104,
+                height: 104,
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(height: 12),
             Text('flip', style: Theme.of(context).textTheme.headlineLarge),
@@ -112,6 +175,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _logoController.dispose();
     unawaited(_audioPlayer.dispose());
     super.dispose();
   }
