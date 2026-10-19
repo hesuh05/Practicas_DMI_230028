@@ -12,6 +12,7 @@ class SharedPreferencesVideoStore implements VideoPostLocalStore {
   static const _savedPostsKey = 'toktik.saved_posts';
   static const _seasonOverrideKey = 'toktik.season_override';
   static const _forcedDateKey = 'toktik.forced_date';
+  static const _halloweenSongKey = 'toktik.halloween_song';
   static const _videoSourceModeKey = 'toktik.video_source_mode';
   static const _discoverVideoSourceModeKey =
       'toktik.discover_video_source_mode';
@@ -51,6 +52,9 @@ class SharedPreferencesVideoStore implements VideoPostLocalStore {
     return SeasonPreferences(
       seasonOverride: preferences.getString(_seasonOverrideKey),
       forcedDate: forcedDate,
+      halloweenSongChoice: _halloweenSongFromName(
+        preferences.getString(_halloweenSongKey),
+      ),
     );
   }
 
@@ -75,6 +79,19 @@ class SharedPreferencesVideoStore implements VideoPostLocalStore {
       );
       if (!didSave) throw StateError('Could not save the forced test date.');
     }
+    final didSave = await preferences.setString(
+      _halloweenSongKey,
+      preferencesToSave.halloweenSongChoice.name,
+    );
+    if (!didSave) throw StateError('Could not save the Halloween song choice.');
+  }
+
+  HalloweenSongChoice _halloweenSongFromName(String? name) {
+    if (name == null) return HalloweenSongChoice.original;
+    for (final choice in HalloweenSongChoice.values) {
+      if (choice.name == name) return choice;
+    }
+    throw FormatException('Stored Halloween song choice is invalid: $name');
   }
 
   @override
