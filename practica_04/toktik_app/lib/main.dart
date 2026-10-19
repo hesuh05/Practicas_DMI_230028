@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toktik/config/api/api_config.dart';
 import 'package:toktik/config/theme/app_theme.dart';
 import 'package:toktik/domain/datasources/video_posts_datasource.dart';
 import 'package:toktik/infrastructure/datasources/local_video_datasource_impl.dart';
@@ -143,6 +142,9 @@ class _TokTikAppState extends State<TokTikApp> {
       home: _showSplash
           ? SplashScreen(
               season: season,
+              halloweenSongChoice: context
+                  .watch<SeasonProvider>()
+                  .halloweenSongChoice,
               onFinished: () {
                 if (mounted) setState(() => _showSplash = false);
               },
