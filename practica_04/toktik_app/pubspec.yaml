@@ -64,6 +64,7 @@ flutter:
     - lib/assets/flip_christmas.png
     - lib/assets/flip_san_valentin.png
     - lib/assets/audio/halloween.mp3
+    - lib/assets/audio/halloween_song.mp3
     - lib/assets/audio/christmas.mp3
     - lib/assets/audio/valentine.mp3
 
