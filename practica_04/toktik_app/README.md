@@ -145,4 +145,4 @@ datasources.
 | Arquitectura inicial: provider local | [Abrir diagrama inicial](https://hesuh05.github.io/Practicas_DMI_230028/practica_04/toktik_app/architecture/initial/architecture.html) | [architecture/initial/architecture.html](architecture/initial/architecture.html) |
 | Arquitectura final: provider, repositorio y datasources | [Abrir diagrama final](https://hesuh05.github.io/Practicas_DMI_230028/practica_04/toktik_app/architecture/final/architecture.html) | [architecture/final/architecture.html](architecture/final/architecture.html) |
 
-[Appetize](https://appetize.io/app/b_kdeugk24a4ivbmb2pbrbrjqf6e)
+[Appetize](https://appetize.io/app/b_rv32t5kx7hk4atks5eebwed6oa)
