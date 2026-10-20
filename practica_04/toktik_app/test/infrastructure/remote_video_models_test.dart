@@ -12,7 +12,7 @@ void main() {
 
     expect(
       post.videoUrl,
-      'https://archive.org/download/archive-item/video.mp4',
+      'https://archive.org/download/archive-item/video.mp4?cnt=0',
     );
     expect(post.source, 'internet_archive');
     expect(post.views, 12);
