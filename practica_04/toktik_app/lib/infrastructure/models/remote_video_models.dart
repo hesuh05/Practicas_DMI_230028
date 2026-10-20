@@ -95,6 +95,7 @@ class InternetArchiveVideoMapper {
       videoUrl: Uri.https(
         'archive.org',
         '/download/$identifier/$fileName',
+        {'cnt': '0'},
       ).toString(),
       likes: 0,
       views: _asInt(json['downloads']),

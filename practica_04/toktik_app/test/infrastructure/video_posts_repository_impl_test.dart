@@ -101,6 +101,7 @@ class _FakeVideoDatasource implements VideoPostDatasource {
 
 class _MemoryVideoStore implements VideoPostLocalStore {
   final Map<String, VideoPost> posts = {};
+  String _videoSourceMode = 'random';
 
   @override
   Future<Map<String, VideoPost>> getSavedPosts() async => {...posts};
@@ -116,4 +117,12 @@ class _MemoryVideoStore implements VideoPostLocalStore {
 
   @override
   Future<void> saveSeasonPreferences(SeasonPreferences preferences) async {}
+
+  @override
+  Future<String?> getVideoSourceMode() async => _videoSourceMode;
+
+  @override
+  Future<void> saveVideoSourceMode(String mode) async {
+    _videoSourceMode = mode;
+  }
 }

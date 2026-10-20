@@ -22,7 +22,7 @@ class InternetArchiveVideoDatasource implements VideoPostDatasource {
   Future<List<VideoPost>> _fetchShared(int page) {
     final existing = _pageRequests[page];
     if (existing != null) return existing;
-    final request = _fetch(page, 'mediatype:movies');
+    final request = _fetch(page, 'mediatype:movies AND format:"MPEG4"');
     _pageRequests[page] = request;
     return request.whenComplete(() {
       if (identical(_pageRequests[page], request)) {
@@ -105,8 +105,16 @@ class InternetArchiveVideoDatasource implements VideoPostDatasource {
         .where((file) {
           final name = file['name'];
           final format = file['format']?.toString().toLowerCase() ?? '';
+          final videoCodec = file['video_codec']?.toString().toLowerCase() ?? '';
+          final unsupportedCodec =
+              videoCodec.contains('hevc') ||
+              videoCodec.contains('h.265') ||
+              videoCodec.contains('h265') ||
+              videoCodec.contains('vp9') ||
+              videoCodec.contains('av1');
           return name is String &&
               name.toLowerCase().endsWith('.mp4') &&
+              !unsupportedCodec &&
               (format.isEmpty ||
                   format.contains('mpeg4') ||
                   format.contains('h.264') ||
@@ -124,8 +132,10 @@ class InternetArchiveVideoDatasource implements VideoPostDatasource {
     candidates.sort((a, b) {
       final aFormat = a['format']?.toString().toLowerCase() ?? '';
       final bFormat = b['format']?.toString().toLowerCase() ?? '';
-      final aFormatRank = aFormat.contains('mpeg4') ? 0 : 1;
-      final bFormatRank = bFormat.contains('mpeg4') ? 0 : 1;
+      final aCodec = a['video_codec']?.toString().toLowerCase() ?? '';
+      final bCodec = b['video_codec']?.toString().toLowerCase() ?? '';
+      final aFormatRank = _formatRank(aFormat, aCodec);
+      final bFormatRank = _formatRank(bFormat, bCodec);
       if (aFormatRank != bFormatRank) {
         return aFormatRank.compareTo(bFormatRank);
       }
@@ -134,6 +144,13 @@ class InternetArchiveVideoDatasource implements VideoPostDatasource {
       return aSize.compareTo(bSize);
     });
     return candidates.isEmpty ? null : candidates.first;
+  }
+
+  int _formatRank(String format, String codec) {
+    if (codec.contains('h.264') || codec.contains('h264')) return 0;
+    if (format.contains('h.264') || format.contains('h264')) return 1;
+    if (format.contains('mpeg4')) return 2;
+    return 3;
   }
 
   int _asInt(Object? value) {
