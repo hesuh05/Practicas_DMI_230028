@@ -105,10 +105,26 @@ esa carpeta en `pubspec.yaml`.
 
 Desde `practica_04/toktik_app`, ejecuta:
 
+
+
 ```shell
 flutter analyze
 flutter test
 ```
+## Demostración en Video
+
+
+
+https://github.com/user-attachments/assets/b710ccce-ca4a-4362-b12f-234c074511ee
+
+
+
+https://github.com/user-attachments/assets/0b7f32ef-f5d2-409e-8d0e-6c3659deef88
+
+
+
+https://github.com/user-attachments/assets/60112c3c-4d4d-4dac-8821-1a9a91dd1990
+
 
 ## Arquitectura
 
