@@ -8,7 +8,7 @@ class Movie {
   final String overview;
   final double popularity;
   final String posterPath;
-  final DateTime releaseData;
+  final DateTime releaseDate;
   final String title;
   final bool video;
   final double voteAverage;
@@ -24,7 +24,7 @@ class Movie {
     required this.overview, 
     required this.popularity,
     required this.posterPath, 
-    required this.releaseData, 
+    required this.releaseDate, 
     required this.title, 
     required this.video, 
     required this.voteAverage, 
