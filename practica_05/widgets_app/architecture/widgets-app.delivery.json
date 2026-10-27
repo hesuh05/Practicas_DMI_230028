@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "f18756e5-506b-42b9-8704-2b5ea853a73a",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\candidate.json",
+  "output": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\widgets-app.html",
+  "specification": {
+    "sha256": "898cea479334c16ec8c7db22eade0df41099fd7de57fd7823eb365a81df7f1b7",
+    "bytes": 8221
+  },
+  "artifact": {
+    "sha256": "6c4b3f9e06dd72bed0ce09899c1ae952c1377c5a437717b4b001ca9e1ba5f00b",
+    "bytes": 836316
+  }
+}

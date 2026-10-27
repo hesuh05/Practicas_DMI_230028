@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Practica 05 · Widgets App",
+    "locale": "en",
+    "output": ".archify/architecture-practica-05-widgets-app-20261023-120000/widgets-app.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/hesuh05/Practicas_DMI_230028",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4f718a48ca31f3141496cd664fcb14fa55e16673"
+    }
+  },
+  "components": [
+    {
+      "id": "devices",
+      "type": "external",
+      "label": "Allowed devices",
+      "sublabel": "Android · iPhone / iPad · macOS · Web",
+      "tag": "Flutter targets",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/android/app/src/main/AndroidManifest.xml",
+          "line": 2,
+          "end_line": 8
+        },
+        {
+          "path": "practica_05/widgets_app/ios/Runner/Info.plist",
+          "line": 17,
+          "end_line": 30
+        },
+        {
+          "path": "practica_05/widgets_app/macos/Runner/Info.plist",
+          "line": 13,
+          "end_line": 24
+        }
+      ],
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        245,
+        78
+      ]
+    },
+    {
+      "id": "startup",
+      "type": "frontend",
+      "label": "Flutter startup",
+      "sublabel": "main() · ProviderScope",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/main.dart",
+          "line": 7,
+          "end_line": 15
+        }
+      ],
+      "pos": [
+        370,
+        40
+      ],
+      "size": [
+        220,
+        78
+      ]
+    },
+    {
+      "id": "app-shell",
+      "type": "frontend",
+      "label": "MainApp",
+      "sublabel": "MaterialApp.router · app theme",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/main.dart",
+          "line": 17,
+          "end_line": 30
+        }
+      ],
+      "pos": [
+        370,
+        190
+      ],
+      "size": [
+        240,
+        82
+      ]
+    },
+    {
+      "id": "router",
+      "type": "frontend",
+      "label": "GoRouter",
+      "sublabel": "11 paths · / is home",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/config/router/app_router.dart",
+          "line": 4,
+          "end_line": 73
+        },
+        {
+          "path": "practica_05/widgets_app/pubspec.yaml",
+          "line": 26,
+          "end_line": 34
+        }
+      ],
+      "pos": [
+        730,
+        190
+      ],
+      "size": [
+        220,
+        82
+      ]
+    },
+    {
+      "id": "home",
+      "type": "frontend",
+      "label": "Home screen",
+      "sublabel": "Builds a list · opens selected path",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/presentation/screens/home/home_screen.dart",
+          "line": 15,
+          "end_line": 72
+        }
+      ],
+      "pos": [
+        40,
+        370
+      ],
+      "size": [
+        250,
+        86
+      ]
+    },
+    {
+      "id": "menu",
+      "type": "frontend",
+      "label": "appMenuItems",
+      "sublabel": "Titles, icons and route paths",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/config/menu/menu_items.dart",
+          "line": 19,
+          "end_line": 90
+        }
+      ],
+      "pos": [
+        370,
+        370
+      ],
+      "size": [
+        250,
+        86
+      ]
+    },
+    {
+      "id": "screens",
+      "type": "frontend",
+      "label": "Widget demo screens",
+      "sublabel": "10 examples · controls · motion · scrolling · theme · counter",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/presentation/screens/screens.dart",
+          "line": 1,
+          "end_line": 11
+        },
+        {
+          "path": "practica_05/widgets_app/lib/config/router/app_router.dart",
+          "line": 15,
+          "end_line": 73
+        }
+      ],
+      "pos": [
+        730,
+        370
+      ],
+      "size": [
+        320,
+        96
+      ]
+    },
+    {
+      "id": "theme-state",
+      "type": "frontend",
+      "label": "ThemeNotifier",
+      "sublabel": "Riverpod state · dark mode · color index",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/presentation/providers/theme_provider.dart",
+          "line": 6,
+          "end_line": 38
+        }
+      ],
+      "pos": [
+        370,
+        590
+      ],
+      "size": [
+        260,
+        88
+      ]
+    },
+    {
+      "id": "theme-config",
+      "type": "frontend",
+      "label": "AppTheme",
+      "sublabel": "Builds Material 3 ThemeData from state",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/config/theme/app_theme.dart",
+          "line": 3,
+          "end_line": 43
+        }
+      ],
+      "pos": [
+        730,
+        590
+      ],
+      "size": [
+        260,
+        88
+      ]
+    },
+    {
+      "id": "counter-state",
+      "type": "frontend",
+      "label": "Counter provider",
+      "sublabel": "Riverpod StateProvider<int>",
+      "sources": [
+        {
+          "path": "practica_05/widgets_app/lib/presentation/providers/counter_provider.dart",
+          "line": 1,
+          "end_line": 4
+        },
+        {
+          "path": "practica_05/widgets_app/lib/presentation/screens/counter/counter_screen.dart",
+          "line": 17,
+          "end_line": 45
+        }
+      ],
+      "pos": [
+        1080,
+        590
+      ],
+      "size": [
+        230,
+        88
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "target-to-start",
+      "from": "devices",
+      "to": "startup",
+      "label": "run on"
+    },
+    {
+      "id": "start-to-shell",
+      "from": "startup",
+      "to": "app-shell",
+      "label": "runApp"
+    },
+    {
+      "id": "shell-to-router",
+      "from": "app-shell",
+      "to": "router",
+      "label": "routerConfig"
+    },
+    {
+      "id": "router-home",
+      "from": "router",
+      "to": "home",
+      "label": "initial route /"
+    },
+    {
+      "id": "menu-home",
+      "from": "menu",
+      "to": "home",
+      "label": "renders destinations"
+    },
+    {
+      "id": "home-router",
+      "from": "home",
+      "to": "router",
+      "label": "context.push(path)",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "router-screens",
+      "from": "router",
+      "to": "screens",
+      "label": "matches route paths"
+    },
+    {
+      "id": "screens-theme",
+      "from": "screens",
+      "to": "theme-state",
+      "label": "watch · toggle · select color",
+      "fromSide": "bottom",
+      "toSide": "right"
+    },
+    {
+      "id": "shell-theme",
+      "from": "app-shell",
+      "to": "theme-state",
+      "label": "watches theme state",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "theme-config-state",
+      "from": "theme-state",
+      "to": "theme-config",
+      "label": "AppTheme copy"
+    },
+    {
+      "id": "config-shell",
+      "from": "theme-config",
+      "to": "app-shell",
+      "label": "getTheme() → ThemeData",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "screens-counter",
+      "from": "screens",
+      "to": "counter-state",
+      "label": "watch · increment",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Supported targets",
+      "items": [
+        "Platform scaffolds are present for Android, iOS, macOS and Web (web/manifest.json).",
+        "iOS settings include iPhone and iPad orientations; the Web manifest uses standalone display."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "State and rendering",
+      "items": [
+        "ProviderScope wraps MainApp; MainApp watches themeNotifierProvider and supplies AppTheme.getTheme() to MaterialApp.router.",
+        "The theme screen updates dark mode and the selected color. The counter screen reads and increments its own provider."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Navigation",
+      "items": [
+        "The home list is built from appMenuItems; tapping an entry calls context.push(menuItem.link).",
+        "GoRouter maps the initial home route and ten demonstration paths to their screens."
+      ]
+    }
+  ]
+}

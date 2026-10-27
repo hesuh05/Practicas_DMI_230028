@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\candidate.json",
+    "sha256": "898cea479334c16ec8c7db22eade0df41099fd7de57fd7823eb365a81df7f1b7",
+    "bytes": 8221
+  },
+  "artifact": {
+    "path": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\widgets-app.html",
+    "sha256": "6c4b3f9e06dd72bed0ce09899c1ae952c1377c5a437717b4b001ca9e1ba5f00b",
+    "bytes": 836316
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\review-3\\widgets-app.finalize.json",
+    "summaryReceipt": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\review-3\\widgets-app.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\PC-01\\Downloads\\Practicas_DMI_230028\\.archify\\architecture-practica-05-widgets-app-20261023-120000\\review-3\\widgets-app.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-23T20:59:00.083Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 4175,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "resolvedCrossovers": 6,
+      "routesOverSuggestedBends": 5,
+      "routesOverSuggestedStretch": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [
+        {
+          "left": {
+            "id": "start-to-shell",
+            "from": "startup",
+            "to": "app-shell",
+            "label": "runApp",
+            "collectionIndex": 1,
+            "artifactIndex": 2
+          },
+          "right": {
+            "id": "router-home",
+            "from": "router",
+            "to": "home",
+            "label": "initial route /",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "point": [
+            480,
+            166
+          ]
+        },
+        {
+          "left": {
+            "id": "router-home",
+            "from": "router",
+            "to": "home",
+            "label": "initial route /",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "right": {
+            "id": "home-router",
+            "from": "home",
+            "to": "router",
+            "label": "context.push(path)",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "point": [
+            314,
+            321
+          ],
+          "sharedNode": "router"
+        },
+        {
+          "left": {
+            "id": "menu-home",
+            "from": "menu",
+            "to": "home",
+            "label": "renders destinations",
+            "collectionIndex": 4,
+            "artifactIndex": 5
+          },
+          "right": {
+            "id": "shell-theme",
+            "from": "app-shell",
+            "to": "theme-state",
+            "label": "watches theme state",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "point": [
+            351.90000000000003,
+            480
+          ]
+        },
+        {
+          "left": {
+            "id": "home-router",
+            "from": "home",
+            "to": "router",
+            "label": "context.push(path)",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "right": {
+            "id": "shell-theme",
+            "from": "app-shell",
+            "to": "theme-state",
+            "label": "watches theme state",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "point": [
+            483,
+            321
+          ]
+        },
+        {
+          "left": {
+            "id": "home-router",
+            "from": "home",
+            "to": "router",
+            "label": "context.push(path)",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "right": {
+            "id": "config-shell",
+            "from": "theme-config",
+            "to": "app-shell",
+            "label": "getTheme() → ThemeData",
+            "collectionIndex": 10,
+            "artifactIndex": 11
+          },
+          "point": [
+            688.8999999999999,
+            321
+          ]
+        },
+        {
+          "left": {
+            "id": "screens-theme",
+            "from": "screens",
+            "to": "theme-state",
+            "label": "watch · toggle · select color",
+            "collectionIndex": 7,
+            "artifactIndex": 8
+          },
+          "right": {
+            "id": "config-shell",
+            "from": "theme-config",
+            "to": "app-shell",
+            "label": "getTheme() → ThemeData",
+            "collectionIndex": 10,
+            "artifactIndex": 11
+          },
+          "point": [
+            856.6,
+            490
+          ]
+        }
+      ],
+      "detours": [
+        {
+          "relationship": {
+            "id": "router-home",
+            "from": "router",
+            "to": "home",
+            "label": "initial route /",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "bends": 3,
+          "stretch": 1.063
+        },
+        {
+          "relationship": {
+            "id": "menu-home",
+            "from": "menu",
+            "to": "home",
+            "label": "renders destinations",
+            "collectionIndex": 4,
+            "artifactIndex": 5
+          },
+          "bends": 3,
+          "stretch": 1.199
+        },
+        {
+          "relationship": {
+            "id": "screens-theme",
+            "from": "screens",
+            "to": "theme-state",
+            "label": "watch · toggle · select color",
+            "collectionIndex": 7,
+            "artifactIndex": 8
+          },
+          "bends": 3,
+          "stretch": 1
+        },
+        {
+          "relationship": {
+            "id": "shell-theme",
+            "from": "app-shell",
+            "to": "theme-state",
+            "label": "watches theme state",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "bends": 4,
+          "stretch": 1.783
+        },
+        {
+          "relationship": {
+            "id": "config-shell",
+            "from": "theme-config",
+            "to": "app-shell",
+            "label": "getTheme() → ThemeData",
+            "collectionIndex": 10,
+            "artifactIndex": 11
+          },
+          "bends": 4,
+          "stretch": 1
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "startup → app-shell crosses router → home: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "router → home and home → router cross next to router: move node home or home so the two reach router from different sides (for example one level with it, one directly above or below it).",
+      "menu → home crosses app-shell → theme-state: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "home → router crosses app-shell → theme-state: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "home → router crosses theme-config → app-shell: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "screens → theme-state crosses theme-config → app-shell: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "router → home needs 3 bends: move node router or home so they share a row or column with matching centers, or sit diagonally with a clear corner.",
+      "menu → home needs 3 bends: move node menu or home so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}
