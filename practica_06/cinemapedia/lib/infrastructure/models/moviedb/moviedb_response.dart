@@ -1,12 +1,7 @@
-import 'package:cinemapedia/infrastructure/models/moviedb/movie_moviedb.dart';
+import 'movie_moviedb.dart';
+
 
 class MovieDbResponse {
-    final Dates? dates;
-    final int page;
-    final List<MovieMoviedb> results;
-    final int totalPages;
-    final int totalResults;
-
     MovieDbResponse({
         required this.dates,
         required this.page,
@@ -15,16 +10,22 @@ class MovieDbResponse {
         required this.totalResults,
     });
 
+    final Dates? dates;
+    final int page;
+    final List<MovieMovieDB> results;
+    final int totalPages;
+    final int totalResults;
+
     factory MovieDbResponse.fromJson(Map<String, dynamic> json) => MovieDbResponse(
-        dates: json["dates"] != null ? Dates.fromJson(json["dates"]): null,
+        dates: json["dates"] != null ? Dates.fromJson(json["dates"]) : null,
         page: json["page"],
-        results: List<MovieMoviedb>.from(json["results"].map((x) => MovieMoviedb.fromJson(x))),
+        results: List<MovieMovieDB>.from(json["results"].map((x) => MovieMovieDB.fromJson(x))),
         totalPages: json["total_pages"],
         totalResults: json["total_results"],
     );
 
     Map<String, dynamic> toJson() => {
-        "dates": dates == null ? null: dates!.toJson(),
+        "dates": dates == null ? null : dates!.toJson(),
         "page": page,
         "results": List<dynamic>.from(results.map((x) => x.toJson())),
         "total_pages": totalPages,
@@ -33,13 +34,13 @@ class MovieDbResponse {
 }
 
 class Dates {
-    final DateTime maximum;
-    final DateTime minimum;
-
     Dates({
         required this.maximum,
         required this.minimum,
     });
+
+    final DateTime maximum;
+    final DateTime minimum;
 
     factory Dates.fromJson(Map<String, dynamic> json) => Dates(
         maximum: DateTime.parse(json["maximum"]),
