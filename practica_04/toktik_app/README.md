@@ -31,8 +31,8 @@ Durante la práctica se utilizan:
 
 - **Feeds:** secciones **Discover**, **For You** y **Favorites**, con navegación
   entre secciones y desplazamiento vertical para recorrer los videos.
-- **Fuentes de video:** consulta de tres fuentes remotas: Coverr, Pixabay e
-  Internet Archive. El repositorio intenta la fuente seleccionada primero y
+- **Fuentes de video:** consulta de dos fuentes remotas: Coverr y Pixabay. El
+  repositorio intenta la fuente seleccionada primero y
   continúa con las demás cuando una falla o no ofrece un video reproducible.
   También contempla videos locales.
 - **Reproducción y sonido:** reproducción y pausa/reanudación de videos, además
@@ -50,7 +50,7 @@ Durante la práctica se utilizan:
 - **Pruebas de tema:** selector para elegir manualmente cualquier temporada,
   guardado en el almacenamiento local para facilitar las pruebas.
 - **Fuente de video:** selector persistente para usar una fuente aleatoria,
-  Coverr, Pixabay, Internet Archive o videos locales.
+  Coverr, Pixabay o videos locales.
 
 La persistencia local se conserva mientras los datos de la aplicación no se
 borren; no sustituye una cuenta ni una sincronización entre dispositivos.
@@ -83,7 +83,6 @@ en el repositorio; configúralas como variables de compilación, leídas desde
 | --- | --- | --- |
 | `COVERR_API_KEY` | Coverr Videos API | Obtener URLs de video MP4. |
 | `PIXABAY_API_KEY` | Pixabay Videos API | Buscar videos. |
-| No requiere clave | Internet Archive API pública | Buscar videos y consultar sus metadatos. |
 
 Ejemplo de ejecución en Windows PowerShell:
 
@@ -93,10 +92,8 @@ flutter run `
   --dart-define=PIXABAY_API_KEY=tu_clave_pixabay
 ```
 
-Internet Archive no requiere clave. La aplicación consulta los metadatos de
-cada elemento para localizar un MP4 directo; si no hay uno compatible, omite
-ese elemento y prueba otro. Si una clave no está configurada o una fuente falla,
-el repositorio continúa con las fuentes disponibles.
+Si una clave no está configurada o una fuente falla, el repositorio continúa
+con las fuentes disponibles.
 
 Para probar videos locales, agrega archivos MP4 en `assets/videos/` y declara
 esa carpeta en `pubspec.yaml`.

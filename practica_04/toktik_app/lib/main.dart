@@ -10,7 +10,6 @@ import 'package:toktik/infrastructure/datasources/local_video_datasource_impl.da
 import 'package:toktik/infrastructure/datasources/coverr_video_datasource.dart';
 import 'package:toktik/infrastructure/datasources/pixabay_video_datasource.dart';
 import 'package:toktik/infrastructure/datasources/shared_preferences_video_store.dart';
-import 'package:toktik/infrastructure/datasources/internet_archive_video_datasource.dart';
 import 'package:toktik/infrastructure/repositories/video_posts_repository_impl.dart';
 import 'package:toktik/presentation/providers/discover_provider.dart';
 import 'package:toktik/presentation/providers/season_provider.dart';
@@ -39,19 +38,14 @@ Future<void> main() async {
       client: client,
       apiKey: "58005090-366c8ee1e16684b518c8ab417",
     );
-    final internetArchive = InternetArchiveVideoDatasource(
-      client: client,
-    );
     final discoverRepository = _createRepository([
       coverr,
       pixabay,
-      internetArchive,
       localVideos,
     ], localStore);
     final forYouRepository = _createRepository([
       pixabay,
       coverr,
-      internetArchive,
       localVideos,
     ], localStore);
     final favoritesRepository = _createRepository([localVideos], localStore);
@@ -61,7 +55,6 @@ Future<void> main() async {
       sources: {
         VideoSourceMode.coverr: coverr,
         VideoSourceMode.pixabay: pixabay,
-        VideoSourceMode.internetArchive: internetArchive,
         VideoSourceMode.local: localVideos,
       },
     );
