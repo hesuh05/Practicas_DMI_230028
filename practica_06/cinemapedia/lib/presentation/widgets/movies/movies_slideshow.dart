@@ -26,6 +26,9 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final colors = Theme.of(context).colorScheme;
+
     return SizedBox(
       height: 310,
       width: double.infinity,
@@ -34,6 +37,13 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
         children: [
           Swiper(
             controller: _controller,
+            pagination: SwiperPagination(
+              margin: const EdgeInsets.only(top: 0),
+              builder: DotSwiperPaginationBuilder(
+                activeColor: colors.primary,
+                color: colors.secondary
+              )
+            ),
             itemCount: widget.movies.length,
             itemBuilder: (context, index) =>
                 _Slide(movie: widget.movies[index]),
