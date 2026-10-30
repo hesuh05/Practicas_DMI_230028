@@ -12,7 +12,6 @@ enum VideoSourceMode {
   rotating,
   coverr,
   pixabay,
-  internetArchive,
   local,
 }
 
@@ -22,7 +21,6 @@ extension VideoSourceModeLabel on VideoSourceMode {
     VideoSourceMode.rotating => 'Rotatorio',
     VideoSourceMode.coverr => 'Coverr',
     VideoSourceMode.pixabay => 'Pixabay',
-    VideoSourceMode.internetArchive => 'Internet Archive',
     VideoSourceMode.local => 'Local',
   };
 }
