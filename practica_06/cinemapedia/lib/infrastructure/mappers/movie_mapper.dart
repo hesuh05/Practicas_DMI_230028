@@ -21,7 +21,7 @@ class MovieMapper {
       title: moviedb.title,
       video: moviedb.video,
       voteAverage: moviedb.voteAverage,
-      voteCount: moviedb.voteCount
+      voteCount: moviedb.voteCount,
     );
 
     static Movie movieDetailsToEntity( MovieDetails moviedb ) => Movie(
@@ -42,7 +42,8 @@ class MovieMapper {
       title: moviedb.title,
       video: moviedb.video,
       voteAverage: moviedb.voteAverage,
-      voteCount: moviedb.voteCount
+      voteCount: moviedb.voteCount,
+      certification: moviedb.certification,
     );
 
 }

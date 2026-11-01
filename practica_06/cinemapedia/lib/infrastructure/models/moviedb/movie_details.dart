@@ -26,6 +26,7 @@ class MovieDetails {
         required this.video,
         required this.voteAverage,
         required this.voteCount,
+        required this.certification,
     });
 
     final bool adult;
@@ -53,8 +54,12 @@ class MovieDetails {
     final bool video;
     final double voteAverage;
     final int voteCount;
+    final String certification;
 
-    factory MovieDetails.fromJson(Map<String, dynamic> json) => MovieDetails(
+    factory MovieDetails.fromJson(
+      Map<String, dynamic> json, {
+      required String region,
+    }) => MovieDetails(
         adult: json["adult"],
         backdropPath: json["backdrop_path"] ?? '',
         belongsToCollection: json["belongs_to_collection"] == null ? null : BelongsToCollection.fromJson(json["belongs_to_collection"]),
@@ -80,7 +85,38 @@ class MovieDetails {
         video: json["video"],
         voteAverage: json["vote_average"]?.toDouble(),
         voteCount: json["vote_count"],
+        certification: _certificationForRegion(json["release_dates"], region),
     );
+
+    static String _certificationForRegion(
+      dynamic releaseDates,
+      String region,
+    ) {
+        if (releaseDates is! Map<String, dynamic>) return '';
+
+        final results = releaseDates["results"];
+        if (results is! List) return '';
+
+        Map<String, dynamic>? fallback;
+        for (final item in results) {
+            if (item is! Map<String, dynamic>) continue;
+            final dates = item["release_dates"];
+            if (dates is! List || dates.isEmpty) continue;
+
+            if (item["iso_3166_1"] == region) {
+                final first = dates.first;
+                if (first is Map<String, dynamic>) {
+                    return first["certification"]?.toString() ?? '';
+                }
+            }
+
+            if (fallback == null && dates.first is Map<String, dynamic>) {
+                fallback = dates.first as Map<String, dynamic>;
+            }
+        }
+
+        return fallback?["certification"]?.toString() ?? '';
+    }
 
     Map<String, dynamic> toJson() => {
         "adult": adult,
