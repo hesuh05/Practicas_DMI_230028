@@ -8,39 +8,36 @@ import 'package:cinemapedia/infrastructure/mappers/movie_mapper.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 
-
 class MoviedbDatasource extends MoviesDatasource {
+  final String language;
+  final String region;
+  late final Dio dio;
 
-  final dio = Dio(BaseOptions(
-    baseUrl: 'https://api.themoviedb.org/3',
-    queryParameters: {
-      'api_key': Environment.theMovieDbKey,
-      'language': 'es-MX'
-    }
-  ));
+  MoviedbDatasource({required this.language, required this.region}) {
+    dio = Dio(
+      BaseOptions(
+        baseUrl: 'https://api.themoviedb.org/3',
+        queryParameters: {'api_key': Environment.theMovieDBKey},
+      ),
+    );
+  }
 
-  List<Movie> _jsonToMovies( Map<String,dynamic> json ) {
-
+  List<Movie> _jsonToMovies(Map<String, dynamic> json) {
     final movieDBResponse = MovieDbResponse.fromJson(json);
 
     final List<Movie> movies = movieDBResponse.results
-    .where((moviedb) => moviedb.posterPath != 'no-poster' )
-    .map(
-      (moviedb) => MovieMapper.movieDBToEntity(moviedb)
-    ).toList();
+        .where((moviedb) => moviedb.posterPath != 'no-poster')
+        .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
+        .toList();
 
     return movies;
-
   }
-
 
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
-
-    final response = await dio.get('/movie/now_playing',
-      queryParameters: {
-        'page': page
-      }
+    final response = await dio.get(
+      '/movie/now_playing',
+      queryParameters: {'page': page, 'language': language, 'region': region},
     );
 
     return _jsonToMovies(response.data);
@@ -48,11 +45,9 @@ class MoviedbDatasource extends MoviesDatasource {
 
   @override
   Future<List<Movie>> getPopular({int page = 1}) async {
-
-    final response = await dio.get('/movie/popular',
-      queryParameters: {
-        'page': page
-      }
+    final response = await dio.get(
+      '/movie/popular',
+      queryParameters: {'page': page, 'language': language, 'region': region},
     );
 
     return _jsonToMovies(response.data);
@@ -60,53 +55,51 @@ class MoviedbDatasource extends MoviesDatasource {
 
   @override
   Future<List<Movie>> getTopRated({int page = 1}) async {
-
-    final response = await dio.get('/movie/top_rated',
-      queryParameters: {
-        'page': page
-      }
+    final response = await dio.get(
+      '/movie/top_rated',
+      queryParameters: {'page': page, 'language': language, 'region': region},
     );
 
     return _jsonToMovies(response.data);
   }
-
-   @override
-  Future<List<Movie>> getUpcoming({int page = 1}) async {
-
-    final response = await dio.get('/movie/upcoming',
-      queryParameters: {
-        'page': page
-      }
-    );
-
-    return _jsonToMovies(response.data);
-  }
-
 
   @override
-  Future<Movie> getMovieById( String id ) async {
+  Future<List<Movie>> getUpcoming({int page = 1}) async {
+    final response = await dio.get(
+      '/movie/upcoming',
+      queryParameters: {'page': page, 'language': language, 'region': region},
+    );
 
-    final response = await dio.get('/movie/$id');
-    if ( response.statusCode != 200 ) throw Exception('Movie with id: $id not found');
+    return _jsonToMovies(response.data);
+  }
 
-    final movieDetails = MovieDetails.fromJson( response.data );
+  @override
+  Future<Movie> getMovieById(String id) async {
+    final response = await dio.get(
+      '/movie/$id',
+      queryParameters: {
+        'language': language,
+        'region': region,
+        'append_to_response': 'release_dates',
+      },
+    );
+    if (response.statusCode != 200)
+      throw Exception('Movie with id: $id not found');
+
+    final movieDetails = MovieDetails.fromJson(response.data, region: region);
     final Movie movie = MovieMapper.movieDetailsToEntity(movieDetails);
     return movie;
   }
 
   @override
-  Future<List<Movie>> searchMovies(String query) async{
+  Future<List<Movie>> searchMovies(String query) async {
+    if (query.isEmpty) return [];
 
-    if ( query.isEmpty ) return [];
-
-    final response = await dio.get('/search/movie',
-      queryParameters: {
-        'query': query
-      }
+    final response = await dio.get(
+      '/search/movie',
+      queryParameters: {'query': query, 'language': language, 'region': region},
     );
 
     return _jsonToMovies(response.data);
   }
-
-
 }
