@@ -2,6 +2,7 @@ import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:go_router/go_router.dart';
 
 
 class MovieHorizontalListview extends StatefulWidget {
@@ -14,7 +15,7 @@ class MovieHorizontalListview extends StatefulWidget {
   const MovieHorizontalListview({
     super.key,
     required this.movies,
-    this.title, 
+    this.title,
     this.subTitle,
     this.loadNextPage
   });
@@ -31,7 +32,7 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
   @override
   void initState() {
     super.initState();
-    
+
     scrollController.addListener(() {
       if ( widget.loadNextPage == null ) return;
 
@@ -97,7 +98,7 @@ class _Slide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
+
           //* Imagen
           SizedBox(
             width: 150,
@@ -114,7 +115,11 @@ class _Slide extends StatelessWidget {
                       child: Center(child: CircularProgressIndicator(strokeWidth: 2 )),
                     );
                   }
-                  return FadeIn(child: child);
+                  return GestureDetector(
+                    onTap: () => context.push('/movie/${ movie.id }'),
+                    child: FadeIn(child: child),
+                  );
+
                 },
               ),
             ),
@@ -142,7 +147,7 @@ class _Slide extends StatelessWidget {
                 Text('${ movie.voteAverage }', style: textStyles.bodyMedium?.copyWith( color: Colors.yellow.shade800 )),
                 const Spacer(),
                 Text( HumanFormats.number(movie.popularity), style: textStyles.bodySmall ),
-          
+
               ],
             ),
           )
@@ -174,16 +179,16 @@ class _Title extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: [
-          
+
           if ( title != null )
             Text(title!, style: titleStyle ),
-          
+
           const Spacer(),
 
           if ( subTitle != null )
             FilledButton.tonal(
               style: const ButtonStyle( visualDensity: VisualDensity.compact ),
-              onPressed: (){}, 
+              onPressed: (){},
               child: Text( subTitle! )
           )
 
