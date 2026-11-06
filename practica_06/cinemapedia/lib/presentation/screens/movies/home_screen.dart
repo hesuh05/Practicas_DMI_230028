@@ -11,10 +11,24 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      drawer: AppDrawer(),
-      body: _HomeView(),
-      bottomNavigationBar: CustomBottomNavigation(),
+    final appDirection = Directionality.of(context);
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Scaffold(
+        drawer: Directionality(
+          textDirection: appDirection,
+          child: const AppDrawer(),
+        ),
+        body: Directionality(
+          textDirection: appDirection,
+          child: const _HomeView(),
+        ),
+        bottomNavigationBar: Directionality(
+          textDirection: appDirection,
+          child: const CustomBottomNavigation(),
+        ),
+      ),
     );
   }
 }
@@ -58,9 +72,12 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     return CustomScrollView(
       slivers: [
-        const SliverAppBar(
-          floating: true,
-          flexibleSpace: FlexibleSpaceBar(title: CustomAppbar()),
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: SliverAppBar(
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(title: CustomAppbar()),
+          ),
         ),
 
         SliverList(
