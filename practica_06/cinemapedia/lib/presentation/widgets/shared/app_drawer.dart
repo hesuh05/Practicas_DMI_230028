@@ -80,9 +80,18 @@ class _LanguageSettingsSheet extends ConsumerWidget {
                 value: language.code,
                 groupValue: selected.code,
                 title: Text('${language.name} (${language.code})'),
-                onChanged: (_) {
-                  ref.read(languageProvider.notifier).changeLanguage(language);
-                  Navigator.of(context).pop();
+                onChanged: (_) async {
+                  try {
+                    await ref
+                        .read(languageProvider.notifier)
+                        .changeLanguage(language);
+                    if (context.mounted) Navigator.of(context).pop();
+                  } on Exception catch (error) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(error.toString())));
+                  }
                 },
               ),
             ),

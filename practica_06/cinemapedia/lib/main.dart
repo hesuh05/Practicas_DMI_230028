@@ -12,7 +12,15 @@ import 'package:cinemapedia/presentation/providers/providers.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
-  runApp(const ProviderScope(child: MainApp()));
+  final container = ProviderContainer();
+  await container.read(languageProvider.notifier).loadSavedLanguage();
+
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends ConsumerWidget {
