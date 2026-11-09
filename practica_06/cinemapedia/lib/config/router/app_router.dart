@@ -1,35 +1,31 @@
 import 'package:go_router/go_router.dart';
 
 import 'package:cinemapedia/presentation/screens/screens.dart';
-import 'package:cinemapedia/presentation/views/home_views/favorites_view.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/home/0',
   routes: [
-    ShellRoute(
-      builder: (context, state, child) {
-        return HomeScreen(childView: child);
+    GoRoute(
+      path: '/home/:page',
+      name: HomeScreen.name,
+      builder: (context, state) {
+        final pageIndex = int.tryParse(state.pathParameters['page'] ?? '0') ?? 0;
+        return HomeScreen(pageIndex: pageIndex);
       },
       routes: [
         GoRoute(
-          path: '/',
-          builder: (context, state) => const HomeView(),
-          routes: [
-            GoRoute(
-              path: 'movie/:id',
-              name: MovieScreen.name,
-              builder: (context, state) {
-                final movieId = state.pathParameters['id'] ?? 'no-id';
-                return MovieScreen(movieId: movieId);
-              },
-            ),
-          ],
-        ),
-        GoRoute(
-          path: '/favorites',
-          builder: (context, state) => const FavoritesView(),
+          path: 'movie/:id',
+          name: MovieScreen.name,
+          builder: (context, state) {
+            final movieId = state.pathParameters['id'] ?? 'no-id';
+            return MovieScreen(movieId: movieId);
+          },
         ),
       ],
+    ),
+    GoRoute(
+      path: '/',
+      redirect: (_, __) => '/home/0',
     ),
   ],
 );
