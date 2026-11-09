@@ -16,6 +16,17 @@ subprojects {
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 subprojects {
+    afterEvaluate {
+        if (project.name == "isar_flutter_libs") {
+            extensions.configure<com.android.build.api.dsl.LibraryExtension> {
+                namespace = "dev.isar.isar_flutter_libs"
+                compileSdk = 36
+            }
+        }
+    }
+}
+
+subprojects {
     project.evaluationDependsOn(":app")
 }
 
