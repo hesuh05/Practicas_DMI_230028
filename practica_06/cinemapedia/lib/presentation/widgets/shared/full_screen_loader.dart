@@ -65,6 +65,12 @@ class FullScreenLoader extends ConsumerWidget {
         children: [
           Text(labels['pleaseWait']!),
           const SizedBox(height: 10),
+          Image.asset(
+            'assets/loaders/bottle-loader.gif',
+            width: 120,
+            height: 120,
+          ),
+          const SizedBox(height: 10),
           const CircularProgressIndicator(strokeWidth: 2),
           const SizedBox(height: 10),
 
