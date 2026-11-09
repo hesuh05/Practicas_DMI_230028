@@ -1,41 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cinemapedia/presentation/providers/settings/language_provider.dart';
 
 
-class CustomBottomNavigation extends StatelessWidget {
-  const CustomBottomNavigation({super.key});
+class CustomBottomNavigation extends ConsumerWidget {
+  final int currentIndex;
+
+  const CustomBottomNavigation({super.key, required this.currentIndex});
 
   @override
-  Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    final currentIndex = location == '/favorites' ? 2 : 0;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
 
     return BottomNavigationBar(
       elevation: 0,
       currentIndex: currentIndex,
       onTap: (index) {
-        switch (index) {
-          case 0:
-          case 1:
-            context.go('/');
-          case 2:
-            context.go('/favorites');
-        }
+        context.go('/home/$index');
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon( Icons.home_max ),
-          label: 'Inicio'
+          icon: const Icon(Icons.home_max),
+          label: _label(language.code, 'home'),
         ),
         BottomNavigationBarItem(
-          icon: Icon( Icons.label_outline ),
-          label: 'Categorías'
+          icon: const Icon(Icons.label_outline),
+          label: _label(language.code, 'categories'),
         ),
         BottomNavigationBarItem(
-          icon: Icon( Icons.favorite_outline ),
-          label: 'Favoritos'
+          icon: const Icon(Icons.favorite_outline),
+          label: _label(language.code, 'favorites'),
         ),
       ]
     );
+  }
+
+  String _label(String language, String key) {
+    const labels = {
+      'MX': {'home': 'Inicio', 'categories': 'Categorías', 'favorites': 'Favoritos'},
+      'US': {'home': 'Home', 'categories': 'Categories', 'favorites': 'Favorites'},
+      'DE': {'home': 'Startseite', 'categories': 'Kategorien', 'favorites': 'Favoriten'},
+      'CN': {'home': '首页', 'categories': '分类', 'favorites': '收藏'},
+      'EG': {'home': 'الرئيسية', 'categories': 'التصنيفات', 'favorites': 'المفضلة'},
+    };
+
+    return labels[language]?[key] ?? labels['MX']![key]!;
   }
 }
