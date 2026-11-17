@@ -2,204 +2,222 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Cinemapedia · Arquitectura Flutter",
-    "subtitle": "Aplicación multiplataforma para descubrir películas y consultar reparto con TMDB",
+    "title": "Arquitectura de Cinemapedia",
+    "subtitle": "Flujo multiplataforma, presentación, dominio, infraestructura y persistencia local",
     "output": "practica_06/cinemapedia/infrastructure/cinemapedia-architecture.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/hesuh05/Practicas_DMI_230028",
       "provider": "github",
-      "link_mode": "web",
-      "revision": "742dbd4512df830e71664947606e7dc793abce91"
+      "link_mode": "local-only",
+      "revision": "8f143bf3579a5cdaf9302079adcd90cf6cb18ecf"
     }
   },
   "components": [
     {
-      "id": "android",
+      "id": "android-entry",
       "type": "external",
       "label": "Android",
-      "sublabel": "Flutter target",
+      "sublabel": "Flutter platform entry",
       "icon": "external",
-      "pos": [300, 70],
-      "size": [150, 68],
-      "sources": [
-        { "path": "practica_06/cinemapedia/pubspec.yaml", "line": 33, "label": "Flutter SDK" }
-      ]
+      "sources": [{"path": "practica_06/cinemapedia/android/app/src/main/kotlin/com/example/cinemapedia/MainActivity.kt"}],
+      "pos": [40, 70],
+      "size": [180, 68]
     },
     {
-      "id": "ios",
+      "id": "ios-entry",
       "type": "external",
       "label": "iOS",
-      "sublabel": "Flutter target",
+      "sublabel": "Flutter platform entry",
       "icon": "external",
-      "pos": [500, 70],
-      "size": [150, 68],
-      "sources": [
-        { "path": "practica_06/cinemapedia/pubspec.yaml", "line": 33, "label": "Flutter SDK" }
-      ]
+      "sources": [{"path": "practica_06/cinemapedia/ios/Runner/AppDelegate.swift"}],
+      "pos": [260, 70],
+      "size": [180, 68]
     },
     {
-      "id": "web",
+      "id": "web-entry",
       "type": "external",
       "label": "Web",
-      "sublabel": "Flutter target",
+      "sublabel": "Flutter platform entry",
       "icon": "external",
+      "sources": [{"path": "practica_06/cinemapedia/web/index.html"}],
+      "pos": [480, 70],
+      "size": [180, 68]
+    },
+    {
+      "id": "desktop-entry",
+      "type": "external",
+      "label": "Desktop",
+      "sublabel": "Windows · macOS · Linux",
+      "icon": "external",
+      "sources": [
+        {"path": "practica_06/cinemapedia/windows/runner/main.cpp"},
+        {"path": "practica_06/cinemapedia/macos/Runner/AppDelegate.swift"},
+        {"path": "practica_06/cinemapedia/linux/runner/main.cc"}
+      ],
       "pos": [700, 70],
-      "size": [150, 68],
-      "sources": [
-        { "path": "practica_06/cinemapedia/pubspec.yaml", "line": 33, "label": "Flutter SDK" }
-      ]
-    },
-    {
-      "id": "windows",
-      "type": "external",
-      "label": "Windows",
-      "sublabel": "Flutter target",
-      "icon": "external",
-      "pos": [300, 170],
-      "size": [150, 68],
-      "sources": [
-        { "path": "practica_06/cinemapedia/pubspec.yaml", "line": 33, "label": "Flutter SDK" }
-      ]
-    },
-    {
-      "id": "macos",
-      "type": "external",
-      "label": "macOS",
-      "sublabel": "Flutter target",
-      "icon": "external",
-      "pos": [500, 170],
-      "size": [150, 68],
-      "sources": [
-        { "path": "practica_06/cinemapedia/pubspec.yaml", "line": 33, "label": "Flutter SDK" }
-      ]
-    },
-    {
-      "id": "linux",
-      "type": "external",
-      "label": "Linux",
-      "sublabel": "Flutter target",
-      "icon": "external",
-      "pos": [700, 170],
-      "size": [150, 68],
-      "sources": [
-        { "path": "practica_06/cinemapedia/pubspec.yaml", "line": 33, "label": "Flutter SDK" }
-      ]
+      "size": [210, 68]
     },
     {
       "id": "flutter-runtime",
       "type": "frontend",
-      "label": "Cinemapedia",
-      "sublabel": "Flutter runtime · ProviderScope",
+      "label": "Flutter runtime",
+      "sublabel": "MaterialApp.router · localization · theme",
       "icon": "frontend",
-      "tag": "multiplataforma",
-      "pos": [485, 280],
-      "size": [280, 82],
       "sources": [
-        { "path": "practica_06/cinemapedia/lib/main.dart", "line": 13, "end_line": 17, "label": "bootstrap" },
-        { "path": "practica_06/cinemapedia/lib/main.dart", "line": 19, "end_line": 38, "label": "MaterialApp.router" }
-      ]
+        {"path": "practica_06/cinemapedia/lib/main.dart"},
+        {"path": "practica_06/cinemapedia/pubspec.yaml"}
+      ],
+      "pos": [370, 205],
+      "size": [220, 76]
+    },
+    {
+      "id": "navigation",
+      "type": "frontend",
+      "label": "Navigation shell",
+      "sublabel": "GoRouter · HomeScreen · Drawer",
+      "icon": "frontend",
+      "sources": [
+        {"path": "practica_06/cinemapedia/lib/config/router/app_router.dart"},
+        {"path": "practica_06/cinemapedia/lib/presentation/screens/movies/home_screen.dart"},
+        {"path": "practica_06/cinemapedia/lib/presentation/widgets/shared/app_drawer.dart"}
+      ],
+      "pos": [370, 330],
+      "size": [220, 76]
     },
     {
       "id": "presentation",
       "type": "frontend",
-      "label": "Presentación",
-      "sublabel": "Screens · widgets · Riverpod",
+      "label": "Presentation",
+      "sublabel": "Movies · Series · Favorites · Search",
       "icon": "frontend",
-      "pos": [80, 430],
-      "size": [270, 82],
       "sources": [
-        { "path": "practica_06/cinemapedia/lib/presentation/providers/providers.dart", "line": 1, "end_line": 13, "label": "providers" },
-        { "path": "practica_06/cinemapedia/lib/config/router/app_router.dart", "line": 5, "end_line": 19, "label": "rutas" }
-      ]
+        {"path": "practica_06/cinemapedia/lib/presentation/views/movies/home_view.dart"},
+        {"path": "practica_06/cinemapedia/lib/presentation/screens/movies/movie_screen.dart"},
+        {"path": "practica_06/cinemapedia/lib/presentation/views/movies/home_view.dart"}
+      ],
+      "pos": [370, 455],
+      "size": [220, 76]
     },
     {
-      "id": "domain",
+      "id": "riverpod-state",
       "type": "backend",
-      "label": "Dominio",
-      "sublabel": "Entidades · contratos de datos",
+      "label": "Riverpod state",
+      "sublabel": "Providers · loading · language · media type",
       "icon": "backend",
-      "pos": [430, 600],
-      "size": [270, 82],
       "sources": [
-        { "path": "practica_06/cinemapedia/lib/domain/datasources/movies_datasource.dart", "line": 4, "end_line": 16, "label": "MoviesDatasource" },
-        { "path": "practica_06/cinemapedia/lib/domain/repositories/movies_repository.dart", "line": 4, "end_line": 16, "label": "MoviesRepository" }
-      ]
+        {"path": "practica_06/cinemapedia/lib/presentation/providers/providers.dart"},
+        {"path": "practica_06/cinemapedia/lib/presentation/providers/movies/movies_providers.dart"},
+        {"path": "practica_06/cinemapedia/lib/presentation/providers/providers.dart"}
+      ],
+      "pos": [370, 580],
+      "size": [220, 76]
     },
     {
-      "id": "infrastructure",
+      "id": "domain-contracts",
       "type": "backend",
-      "label": "Infraestructura",
-      "sublabel": "Repositories · Dio · mappers",
+      "label": "Domain contracts",
+      "sublabel": "Entities · repositories · datasources",
       "icon": "backend",
-      "tag": "API adapter",
-      "pos": [760, 430],
-      "size": [290, 82],
       "sources": [
-        { "path": "practica_06/cinemapedia/lib/infrastructure/repositories/movie_repository_impl.dart", "line": 6, "end_line": 10, "label": "repository impl" },
-        { "path": "practica_06/cinemapedia/lib/infrastructure/datasources/moviedb_datasource.dart", "line": 11, "end_line": 22, "label": "Dio datasource" }
-      ]
+        {"path": "practica_06/cinemapedia/lib/domain/entities/movie.dart"},
+        {"path": "practica_06/cinemapedia/lib/domain/entities/entities.dart"},
+        {"path": "practica_06/cinemapedia/lib/domain/repositories/movies_repository.dart"}
+      ],
+      "pos": [370, 705],
+      "size": [220, 76]
     },
     {
-      "id": "tmdb",
+      "id": "movie-series-adapters",
+      "type": "backend",
+      "label": "MovieDB adapters",
+      "sublabel": "Repositories · mappers · API datasources",
+      "icon": "backend",
+      "sources": [
+        {"path": "practica_06/cinemapedia/lib/infrastructure/repositories/movie_repository_impl.dart"},
+        {"path": "practica_06/cinemapedia/lib/infrastructure/datasources/moviedb_datasource.dart"},
+        {"path": "practica_06/cinemapedia/lib/infrastructure/mappers/movie_mapper.dart"}
+      ],
+      "pos": [90, 850],
+      "size": [230, 76]
+    },
+    {
+      "id": "local-adapters",
+      "type": "database",
+      "label": "Local storage adapters",
+      "sublabel": "Isar favorites · path_provider",
+      "icon": "database",
+      "sources": [
+        {"path": "practica_06/cinemapedia/lib/infrastructure/datasources/isar_datasource.dart"},
+        {"path": "practica_06/cinemapedia/lib/infrastructure/repositories/local_storage_repository_impl.dart"}
+      ],
+      "pos": [370, 850],
+      "size": [230, 76]
+    },
+    {
+      "id": "remote-api",
       "type": "cloud",
-      "label": "The Movie Database",
-      "sublabel": "REST API · /3",
+      "label": "TMDB API",
+      "sublabel": "Movies · series · actors · videos",
       "icon": "cloud",
-      "pos": [1100, 600],
-      "size": [260, 82],
-      "sources": [
-        { "path": "practica_06/cinemapedia/lib/infrastructure/datasources/moviedb_datasource.dart", "line": 16, "end_line": 22, "label": "base URL" },
-        { "path": "practica_06/cinemapedia/lib/infrastructure/datasources/actor_moviedb_datasource.dart", "line": 13, "end_line": 21, "label": "credits API" }
-      ]
+      "sources": [{"path": "practica_06/cinemapedia/lib/infrastructure/datasources/moviedb_datasource.dart"}],
+      "pos": [90, 1000],
+      "size": [230, 76]
+    },
+    {
+      "id": "isar-database",
+      "type": "database",
+      "label": "Isar database",
+      "sublabel": "MovieSchema · TvShowSchema",
+      "icon": "database",
+      "sources": [{"path": "practica_06/cinemapedia/lib/infrastructure/datasources/isar_datasource.dart"}],
+      "pos": [370, 1000],
+      "size": [230, 76]
     }
   ],
   "boundaries": [
     {
       "kind": "region",
-      "label": "Targets soportados por Flutter",
-      "wraps": ["android", "ios", "web", "windows", "macos", "linux"],
+      "label": "Flutter application",
+      "wraps": ["flutter-runtime", "navigation", "presentation", "riverpod-state", "domain-contracts", "movie-series-adapters", "local-adapters"],
+      "pad": 26
+    },
+    {
+      "kind": "region",
+      "label": "External services and local persistence",
+      "wraps": ["remote-api", "isar-database"],
       "pad": 26
     }
   ],
   "connections": [
-    { "id": "android-runtime", "from": "android", "to": "flutter-runtime", "label": "ejecuta", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" },
-    { "id": "ios-runtime", "from": "ios", "to": "flutter-runtime", "fromSide": "bottom", "toSide": "top" },
-    { "id": "web-runtime", "from": "web", "to": "flutter-runtime", "fromSide": "bottom", "toSide": "top" },
-    { "id": "windows-runtime", "from": "windows", "to": "flutter-runtime", "fromSide": "bottom", "toSide": "top" },
-    { "id": "macos-runtime", "from": "macos", "to": "flutter-runtime", "fromSide": "bottom", "toSide": "top" },
-    { "id": "linux-runtime", "from": "linux", "to": "flutter-runtime", "fromSide": "bottom", "toSide": "top" },
-    { "id": "runtime-presentation", "from": "flutter-runtime", "to": "presentation", "label": "rutas y UI", "variant": "emphasis" },
-    { "id": "presentation-infrastructure", "from": "presentation", "to": "infrastructure", "label": "providers consultan", "variant": "emphasis" },
-    { "id": "presentation-domain", "from": "presentation", "to": "domain", "label": "usa entidades", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
-    { "id": "infrastructure-domain", "from": "infrastructure", "to": "domain", "label": "implementa contratos", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
-    { "id": "infrastructure-tmdb", "from": "infrastructure", "to": "tmdb", "label": "HTTPS · películas y reparto", "variant": "emphasis" },
-    { "id": "tmdb-infrastructure", "from": "tmdb", "to": "infrastructure", "variant": "dashed", "fromSide": "top", "toSide": "bottom" }
+    {"id": "android-to-flutter", "from": "android-entry", "to": "flutter-runtime", "label": "starts app", "variant": "emphasis"},
+    {"id": "ios-to-flutter", "from": "ios-entry", "to": "flutter-runtime", "label": "starts app", "variant": "emphasis"},
+    {"id": "web-to-flutter", "from": "web-entry", "to": "flutter-runtime", "label": "starts app", "variant": "emphasis"},
+    {"id": "desktop-to-flutter", "from": "desktop-entry", "to": "flutter-runtime", "label": "starts app", "variant": "emphasis"},
+    {"id": "flutter-to-navigation", "from": "flutter-runtime", "to": "navigation", "label": "configures router"},
+    {"id": "navigation-to-presentation", "from": "navigation", "to": "presentation", "label": "routes screens"},
+    {"id": "presentation-to-state", "from": "presentation", "to": "riverpod-state", "label": "reads and updates state"},
+    {"id": "state-to-domain", "from": "riverpod-state", "to": "domain-contracts", "label": "uses contracts"},
+    {"id": "domain-to-remote-adapters", "from": "domain-contracts", "to": "movie-series-adapters", "label": "delegates data access"},
+    {"id": "domain-to-local-adapters", "from": "domain-contracts", "to": "local-adapters", "label": "persists favorites"},
+    {"id": "remote-adapters-to-api", "from": "movie-series-adapters", "to": "remote-api", "label": "HTTPS / Dio", "variant": "dashed"},
+    {"id": "local-adapters-to-isar", "from": "local-adapters", "to": "isar-database", "label": "read/write favorites", "variant": "dashed"}
   ],
   "cards": [
     {
       "dot": "cyan",
-      "title": "Entrada multiplataforma",
-      "items": [
-        "Flutter permite ejecutar la misma app en Android, iOS, Web, Windows, macOS y Linux.",
-        "Todos los targets convergen en el runtime de Cinemapedia."
-      ]
+      "title": "Entradas multiplataforma",
+      "items": ["Android, iOS, Web y Desktop convergen en el runtime Flutter.", "Desktop agrupa Windows, macOS y Linux."]
     },
     {
       "dot": "emerald",
-      "title": "Flujo de consulta",
-      "items": [
-        "Riverpod conecta la presentación con los repositorios.",
-        "La infraestructura consulta películas, búsquedas, detalles y créditos."
-      ]
+      "title": "Flujo principal",
+      "items": ["GoRouter dirige Home, detalle de películas y detalle de series.", "Riverpod coordina carga, idioma, tipo de contenido y favoritos."]
     },
     {
       "dot": "violet",
-      "title": "Configuración",
-      "items": [
-        "Dio usa https://api.themoviedb.org/3 como base URL.",
-        "La clave THE_MOVIEDB_KEY se carga desde flutter_dotenv."
-      ]
+      "title": "Datos",
+      "items": ["TMDB abastece películas, series, actores y videos mediante Dio.", "Isar conserva favoritos de películas y series localmente."]
     }
   ]
 }

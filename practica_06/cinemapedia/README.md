@@ -112,6 +112,44 @@ flutter analyze
 flutter test
 ```
 
+## Evidencias
+
+### Pantalla principal y navegación
+
+| Inicio (Películas) | Inicio (Series) |
+| :---: | :---: |
+| <img src="../proof/inicio.png" alt="Inicio Películas" width="240"/> | <img src="../proof/inicio_series.png" alt="Inicio Series" width="240"/> |
+| Carrusel principal y listados por sección en español. | Vista principal adaptada al catálogo de series de televisión. |
+
+| Menú lateral | Menú de idiomas |
+| :---: | :---: |
+| <img src="../proof/menu_burger.png" alt="Menú Hamburguesa" width="240"/> | <img src="../proof/menu_idiomas.png" alt="Menú de Idiomas" width="240"/> |
+| Selector entre Películas y Series y acceso rápido a la configuración de idioma. | Selector visual de idioma y región con banderas identificadoras. |
+
+### Categorías y favoritos
+
+| Categorías de películas | Categorías de series |
+| :---: | :---: |
+| <img src="../proof/categorias.png" alt="Categorías Películas" width="240"/> | <img src="../proof/categorias_series.png" alt="Categorías Series" width="240"/> |
+| Exploración visual organizada en cuadrícula escalonada. | Exploración por géneros y categorías de series. |
+
+| Favoritos (Películas) | Favoritos (Series) |
+| :---: | :---: |
+| <img src="../proof/favoritos.png" alt="Favoritos Películas" width="240"/> | <img src="../proof/favoritos_series.png" alt="Favoritos Series" width="240"/> |
+| Listado de películas guardadas localmente por el usuario. | Sección dedicada a las series almacenadas en favoritos. |
+
+### Localización e idiomas (TMDB)
+
+| Inglés (en-US) | Alemán (de-DE) |
+| :---: | :---: |
+| <img src="../proof/inicio_us_language.png" alt="Inglés" width="240"/> | <img src="../proof/inicio_de_language.png" alt="Alemán" width="240"/> |
+| Interfaz y catálogo localizados para Estados Unidos. | Interfaz y catálogo localizados para Alemania. |
+
+| Chino (zh-CN) | Árabe (ar-EG) |
+| :---: | :---: |
+| <img src="../proof/inicio_cn_language.png" alt="Chino" width="240"/> | <img src="../proof/inicio_eg_language.png" alt="Árabe" width="240"/> |
+| Interfaz y catálogo localizados en chino simplificado. | Interfaz y catálogo localizados en árabe con adaptación de dirección RTL. |
+
 ## Arquitectura
 
 - `lib/presentation/`: pantallas, widgets, navegación y providers de estado.
@@ -143,3 +181,8 @@ el dominio, la infraestructura y la API de TMDB.
 [Abrir diagrama de arquitectura](https://hesuh05.github.io/Practicas_DMI_230028/practica_06/cinemapedia/infrastructure/cinemapedia-architecture.html)
 
 [Archivo fuente del diagrama](infrastructure/cinemapedia-architecture.json)
+
+## Demo y Descarga
+
+- **Probar en línea (Appetize.io):** [Ejecutar Cinemapedia en el navegador](https://appetize.io/app/b_sbodpyutlkkagzc4csrcwqqove)
+- **Descargar APK (Android):** [app-release.apk](https://drive.google.com/file/d/1pGtQUdDOQWWrgT88qQLKhP96buTZe6Us/view?usp=sharing)
