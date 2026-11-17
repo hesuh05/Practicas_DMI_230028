@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "30d1d182-a9bd-4701-8309-61943cdc963d",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Chucho\\Documents\\git\\hesuh05\\Practicas_DMI_230028\\practica_06\\cinemapedia\\infrastructure\\cinemapedia-architecture.json",
+  "output": "C:\\Users\\Chucho\\Documents\\git\\hesuh05\\Practicas_DMI_230028\\practica_06\\cinemapedia\\infrastructure\\cinemapedia-architecture.html",
+  "specification": {
+    "sha256": "94199bd0cd1b6516fe7f7a770cad5ac62860b9db73c1c675d79e57a23be99637",
+    "bytes": 8946
+  },
+  "artifact": {
+    "sha256": "bfe40977fb62de963894452d8423bda65b3c8b60f62be9ffa948c1241ddb9c3b",
+    "bytes": 775774
+  }
+}

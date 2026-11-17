@@ -1,0 +1,149 @@
+import 'package:cinemapedia/config/language/app_language.dart';
+import 'package:cinemapedia/presentation/providers/settings/language_provider.dart';
+import 'package:cinemapedia/presentation/widgets/shared/media_type_selector.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class AppDrawer extends ConsumerWidget {
+  const AppDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
+
+    return Drawer(
+      child: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Text(
+                'Cinemapedia',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Text(
+                _mediaTypeLabel(language),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const MediaTypeSelector(),
+            const Divider(height: 8),
+            ListTile(
+              leading: const Icon(Icons.settings_outlined),
+              title: Text(_settingsLabel(language)),
+              onTap: () {
+                Navigator.of(context).pop();
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => const _LanguageSettingsSheet(),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _mediaTypeLabel(AppLanguage language) {
+    switch (language.code) {
+      case 'US':
+        return 'Content';
+      case 'DE':
+        return 'Inhalt';
+      case 'CN':
+        return '内容';
+      case 'EG':
+        return 'المحتوى';
+      default:
+        return 'Contenido';
+    }
+  }
+
+  String _settingsLabel(AppLanguage language) {
+    switch (language.code) {
+      case 'US':
+        return 'Settings';
+      case 'DE':
+        return 'Einstellungen';
+      case 'CN':
+        return '设置';
+      case 'EG':
+        return 'الإعدادات';
+      default:
+        return 'Configuración';
+    }
+  }
+}
+
+class _LanguageSettingsSheet extends ConsumerWidget {
+  const _LanguageSettingsSheet();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(languageProvider);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(_title(selected)),
+              leading: const Icon(Icons.language),
+            ),
+            ...AppLanguage.supported.map(
+              (language) => RadioListTile<String>(
+                value: language.code,
+                groupValue: selected.code,
+                title: Row(
+                  children: [
+                    Text(language.flag, style: const TextStyle(fontSize: 22)),
+                    const SizedBox(width: 12),
+                    Text('${language.name} (${language.code})'),
+                  ],
+                ),
+                onChanged: (_) async {
+                  try {
+                    await ref
+                        .read(languageProvider.notifier)
+                        .changeLanguage(language);
+                    if (context.mounted) Navigator.of(context).pop();
+                  } on Exception catch (error) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(error.toString())));
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _title(AppLanguage language) {
+    switch (language.code) {
+      case 'US':
+        return 'Language';
+      case 'DE':
+        return 'Sprache';
+      case 'CN':
+        return '语言';
+      case 'EG':
+        return 'اللغة';
+      default:
+        return 'Idioma';
+    }
+  }
+}
