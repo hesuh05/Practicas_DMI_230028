@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppLanguage {
   final String code;
   final String name;
+  final String flag;
   final String tmdbLanguage;
   final String region;
   final Locale locale;
@@ -10,6 +11,7 @@ class AppLanguage {
   const AppLanguage({
     required this.code,
     required this.name,
+    required this.flag,
     required this.tmdbLanguage,
     required this.region,
     required this.locale,
@@ -19,6 +21,7 @@ class AppLanguage {
     AppLanguage(
       code: 'MX',
       name: 'Español',
+      flag: '🇲🇽',
       tmdbLanguage: 'es-MX',
       region: 'MX',
       locale: Locale('es', 'MX'),
@@ -26,6 +29,7 @@ class AppLanguage {
     AppLanguage(
       code: 'US',
       name: 'English',
+      flag: '🇺🇸',
       tmdbLanguage: 'en-US',
       region: 'US',
       locale: Locale('en', 'US'),
@@ -33,6 +37,7 @@ class AppLanguage {
     AppLanguage(
       code: 'DE',
       name: 'Deutsch',
+      flag: '🇩🇪',
       tmdbLanguage: 'de-DE',
       region: 'DE',
       locale: Locale('de', 'DE'),
@@ -40,6 +45,7 @@ class AppLanguage {
     AppLanguage(
       code: 'CN',
       name: '中文',
+      flag: '🇨🇳',
       tmdbLanguage: 'zh-CN',
       region: 'CN',
       locale: Locale('zh', 'CN'),
@@ -47,6 +53,7 @@ class AppLanguage {
     AppLanguage(
       code: 'EG',
       name: 'العربية',
+      flag: '🇪🇬',
       tmdbLanguage: 'ar-EG',
       region: 'EG',
       locale: Locale('ar', 'EG'),
@@ -56,6 +63,7 @@ class AppLanguage {
   static const defaultLanguage = AppLanguage(
     code: 'MX',
     name: 'Español',
+    flag: '🇲🇽',
     tmdbLanguage: 'es-MX',
     region: 'MX',
     locale: Locale('es', 'MX'),

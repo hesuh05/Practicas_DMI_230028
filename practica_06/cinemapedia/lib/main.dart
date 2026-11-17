@@ -16,10 +16,7 @@ Future<void> main() async {
   await container.read(languageProvider.notifier).loadSavedLanguage();
 
   runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const MainApp(),
-    ),
+    UncontrolledProviderScope(container: container, child: const MainApp()),
   );
 }
 
@@ -33,7 +30,7 @@ class MainApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme().getTheme(),
+      theme: AppTheme().getTheme(language),
       locale: language.locale,
       supportedLocales: AppLanguage.supported
           .map((item) => item.locale)
