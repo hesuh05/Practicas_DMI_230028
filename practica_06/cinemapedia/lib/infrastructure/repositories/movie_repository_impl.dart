@@ -32,6 +32,19 @@ class MovieRepositoryImpl extends MoviesRepository {
   }
 
   @override
+  Future<MediaCertification> getCertificationById(int movieId) {
+    return datasource.getCertificationById(movieId);
+  }
+
+  @override
+  Future<String?> getCertificationMeaning(
+    String certification, {
+    required String region,
+  }) {
+    return datasource.getCertificationMeaning(certification, region: region);
+  }
+
+  @override
   Future<List<Movie>> searchMovies(String query) {
     return datasource.searchMovies(query);
   }

@@ -1,4 +1,5 @@
 import 'package:cinemapedia/domain/entities/tv_show.dart';
+import 'package:cinemapedia/domain/entities/media_certification.dart';
 
 class TvShowMapper {
   static TvEpisode episodeFromJson(Map<String, dynamic> json) => TvEpisode(
@@ -9,7 +10,7 @@ class TvShowMapper {
     voteAverage: (json['vote_average'] as num?)?.toDouble() ?? 0,
   );
 
-  static TvShow fromJson(Map<String, dynamic> json) {
+  static TvShow fromJson(Map<String, dynamic> json, {String region = ''}) {
     final firstAirDate = json['first_air_date'] as String?;
     final seasons = (json['seasons'] as List<dynamic>? ?? [])
         .whereType<Map<String, dynamic>>()
@@ -37,7 +38,43 @@ class TvShowMapper {
       voteCount: json['vote_count'] as int? ?? 0,
       numberOfSeasons: json['number_of_seasons'] as int? ?? 0,
       numberOfEpisodes: json['number_of_episodes'] as int? ?? 0,
+      certification: certificationForRegion(json['content_ratings'], region),
     )..seasons = seasons;
+  }
+
+  static MediaCertification certificationForRegion(
+    dynamic contentRatings,
+    String region,
+  ) {
+    if (contentRatings is! Map<String, dynamic>) {
+      return MediaCertification.empty(requestedRegion: region);
+    }
+    final results = contentRatings['results'];
+    if (results is! List) {
+      return MediaCertification.empty(requestedRegion: region);
+    }
+
+    MediaCertification? usFallback;
+    MediaCertification? firstFallback;
+    for (final item in results) {
+      if (item is! Map<String, dynamic>) continue;
+      final itemRegion = item['iso_3166_1']?.toString() ?? '';
+      final code = item['rating']?.toString().trim() ?? '';
+      if (itemRegion.isEmpty || code.isEmpty) continue;
+
+      final candidate = MediaCertification(
+        code: code,
+        region: itemRegion,
+        requestedRegion: region,
+      );
+      if (itemRegion == region) return candidate;
+      if (itemRegion == 'US') usFallback ??= candidate;
+      firstFallback ??= candidate;
+    }
+
+    return usFallback ??
+        firstFallback ??
+        MediaCertification.empty(requestedRegion: region);
   }
 
   static String _image(String? path) => path == null

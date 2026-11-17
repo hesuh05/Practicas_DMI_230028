@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:cinemapedia/domain/entities/media_certification.dart';
 
 part 'movie.g.dart';
 
@@ -21,7 +22,7 @@ class Movie {
   final double voteAverage;
   final int voteCount;
   @ignore
-  final String certification;
+  final MediaCertification certification;
 
   Movie({
     required this.adult,
@@ -38,6 +39,6 @@ class Movie {
     required this.video,
     required this.voteAverage,
     required this.voteCount,
-    this.certification = '',
+    this.certification = const MediaCertification.empty(requestedRegion: ''),
   });
 }

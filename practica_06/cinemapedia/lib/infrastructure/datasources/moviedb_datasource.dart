@@ -7,6 +7,7 @@ import 'package:cinemapedia/domain/datasources/movies_datasource.dart';
 
 import 'package:cinemapedia/infrastructure/mappers/movie_mapper.dart';
 import 'package:cinemapedia/infrastructure/mappers/video_mapper.dart';
+import 'package:cinemapedia/infrastructure/mappers/certification_mapper.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
 import 'package:cinemapedia/domain/entities/entities.dart';
 
@@ -82,15 +83,39 @@ class MoviedbDatasource extends MoviesDatasource {
       queryParameters: {
         'language': language,
         'region': region,
-        'append_to_response': 'release_dates',
       },
     );
     if (response.statusCode != 200)
       throw Exception('Movie with id: $id not found');
 
-    final movieDetails = MovieDetails.fromJson(response.data, region: region);
+    final releaseDatesResponse = await dio.get('/movie/$id/release_dates');
+    final details = Map<String, dynamic>.from(response.data)
+      ..['release_dates'] = releaseDatesResponse.data;
+    final movieDetails = MovieDetails.fromJson(details, region: region);
     final Movie movie = MovieMapper.movieDetailsToEntity(movieDetails);
     return movie;
+  }
+
+  @override
+  Future<MediaCertification> getCertificationById(int movieId) async {
+    final response = await dio.get('/movie/$movieId/release_dates');
+    return MovieDetails.certificationForRegion(response.data, region);
+  }
+
+  @override
+  Future<String?> getCertificationMeaning(
+    String certification, {
+    required String region,
+  }) async {
+    final response = await dio.get(
+      '/certification/movie/list',
+      queryParameters: {'language': language},
+    );
+    return CertificationMapper.meaningForRegion(
+      response.data,
+      region: region,
+      certification: certification,
+    );
   }
 
   @override
