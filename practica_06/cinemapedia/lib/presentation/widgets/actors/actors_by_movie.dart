@@ -43,7 +43,7 @@ class ActorsByMovie extends ConsumerWidget {
                         width: 135,
                         fit: BoxFit.cover,
                         placeholder: const AssetImage(
-                          'assets/loaders/bottle-loader.gif',
+                          'assets/loaders/wedge-loader.gif',
                         ),
                         image: NetworkImage(actor.profilePath),
                       ),

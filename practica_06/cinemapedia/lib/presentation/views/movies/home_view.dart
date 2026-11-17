@@ -19,6 +19,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
     ref.read(popularMoviesProvider.notifier).loadNextPage();
     ref.read(topRatedMoviesProvider.notifier).loadNextPage();
     ref.read(upcomingMoviesProvider.notifier).loadNextPage();
+    ref.read(popularTvShowsProvider.notifier).loadNextPage();
+    ref.read(onTheAirTvShowsProvider.notifier).loadNextPage();
+    ref.read(topRatedTvShowsProvider.notifier).loadNextPage();
   }
 
   @override
@@ -28,10 +31,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ref.read(popularMoviesProvider.notifier).loadNextPage();
       ref.read(topRatedMoviesProvider.notifier).loadNextPage();
       ref.read(upcomingMoviesProvider.notifier).loadNextPage();
+      ref.read(popularTvShowsProvider.notifier).loadNextPage();
+      ref.read(onTheAirTvShowsProvider.notifier).loadNextPage();
+      ref.read(topRatedTvShowsProvider.notifier).loadNextPage();
     });
 
     final initialLoading = ref.watch(initialLoadingProvider);
     if (initialLoading) return const FullScreenLoader();
+    final mediaType = ref.watch(mediaTypeProvider);
 
     final language = ref.watch(languageProvider);
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
@@ -39,6 +46,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final popularMovies = ref.watch(popularMoviesProvider);
     final topRatedMovies = ref.watch(topRatedMoviesProvider);
     final upcomingMovies = ref.watch(upcomingMoviesProvider);
+    final popularTvShows = ref.watch(popularTvShowsProvider);
+    final onTheAirTvShows = ref.watch(onTheAirTvShowsProvider);
+    final topRatedTvShows = ref.watch(topRatedTvShowsProvider);
 
     return CustomScrollView(
       slivers: [
@@ -49,45 +59,75 @@ class _HomeViewState extends ConsumerState<HomeView> {
             flexibleSpace: FlexibleSpaceBar(title: CustomAppbar()),
           ),
         ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => Column(
-              children: [
-                MoviesSlideshow(movies: slideShowMovies),
-                MovieHorizontalListview(
-                  movies: nowPlayingMovies,
-                  title: _label(language.code, 'nowPlaying'),
-                  subTitle: _label(language.code, 'nowPlayingSubtitle'),
-                  loadNextPage: () => ref
-                      .read(nowPlayingMoviesProvider.notifier)
-                      .loadNextPage(),
-                ),
-                MovieHorizontalListview(
-                  movies: upcomingMovies,
-                  title: _label(language.code, 'upcoming'),
-                  subTitle: _label(language.code, 'upcomingSubtitle'),
-                  loadNextPage: () =>
-                      ref.read(upcomingMoviesProvider.notifier).loadNextPage(),
-                ),
-                MovieHorizontalListview(
-                  movies: popularMovies,
-                  title: _label(language.code, 'popular'),
-                  loadNextPage: () =>
-                      ref.read(popularMoviesProvider.notifier).loadNextPage(),
-                ),
-                MovieHorizontalListview(
-                  movies: topRatedMovies,
-                  title: _label(language.code, 'topRated'),
-                  subTitle: _label(language.code, 'topRatedSubtitle'),
-                  loadNextPage: () =>
-                      ref.read(topRatedMoviesProvider.notifier).loadNextPage(),
-                ),
-                const SizedBox(height: 10),
-              ],
+        if (mediaType == MediaType.tvShows)
+          SliverList(
+            delegate: SliverChildListDelegate([
+              TvShowsSlideshow(shows: onTheAirTvShows),
+              TvShowHorizontalListView(
+                shows: onTheAirTvShows,
+                title: _label(language.code, 'onTheAir'),
+                subTitle: _label(language.code, 'onTheAirSubtitle'),
+                loadNextPage: () =>
+                    ref.read(onTheAirTvShowsProvider.notifier).loadNextPage(),
+              ),
+              TvShowHorizontalListView(
+                shows: popularTvShows,
+                title: _label(language.code, 'popular'),
+                loadNextPage: () =>
+                    ref.read(popularTvShowsProvider.notifier).loadNextPage(),
+              ),
+              TvShowHorizontalListView(
+                shows: topRatedTvShows,
+                title: _label(language.code, 'topRated'),
+                subTitle: _label(language.code, 'topRatedSubtitle'),
+                loadNextPage: () =>
+                    ref.read(topRatedTvShowsProvider.notifier).loadNextPage(),
+              ),
+              const SizedBox(height: 10),
+            ]),
+          )
+        else
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => Column(
+                children: [
+                  MoviesSlideshow(movies: slideShowMovies),
+                  MovieHorizontalListview(
+                    movies: nowPlayingMovies,
+                    title: _label(language.code, 'nowPlaying'),
+                    subTitle: _label(language.code, 'nowPlayingSubtitle'),
+                    loadNextPage: () => ref
+                        .read(nowPlayingMoviesProvider.notifier)
+                        .loadNextPage(),
+                  ),
+                  MovieHorizontalListview(
+                    movies: upcomingMovies,
+                    title: _label(language.code, 'upcoming'),
+                    subTitle: _label(language.code, 'upcomingSubtitle'),
+                    loadNextPage: () => ref
+                        .read(upcomingMoviesProvider.notifier)
+                        .loadNextPage(),
+                  ),
+                  MovieHorizontalListview(
+                    movies: popularMovies,
+                    title: _label(language.code, 'popular'),
+                    loadNextPage: () =>
+                        ref.read(popularMoviesProvider.notifier).loadNextPage(),
+                  ),
+                  MovieHorizontalListview(
+                    movies: topRatedMovies,
+                    title: _label(language.code, 'topRated'),
+                    subTitle: _label(language.code, 'topRatedSubtitle'),
+                    loadNextPage: () => ref
+                        .read(topRatedMoviesProvider.notifier)
+                        .loadNextPage(),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+              childCount: 1,
             ),
-            childCount: 1,
           ),
-        ),
       ],
     );
   }
@@ -102,6 +142,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
         'popular': 'Populares',
         'topRated': 'Mejor calificadas',
         'topRatedSubtitle': 'Desde siempre',
+        'onTheAir': 'En emisión',
+        'onTheAirSubtitle': 'Esta semana',
       },
       'US': {
         'nowPlaying': 'Now playing',
@@ -111,6 +153,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
         'popular': 'Popular',
         'topRated': 'Top rated',
         'topRatedSubtitle': 'All time',
+        'onTheAir': 'On the air',
+        'onTheAirSubtitle': 'This week',
       },
       'DE': {
         'nowPlaying': 'Im Kino',
@@ -120,6 +164,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
         'popular': 'Beliebt',
         'topRated': 'Am besten bewertet',
         'topRatedSubtitle': 'Aller Zeiten',
+        'onTheAir': 'Im Fernsehen',
+        'onTheAirSubtitle': 'Diese Woche',
       },
       'CN': {
         'nowPlaying': '正在上映',
@@ -129,6 +175,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
         'popular': '热门',
         'topRated': '评分最高',
         'topRatedSubtitle': '一直以来',
+        'onTheAir': '正在播出',
+        'onTheAirSubtitle': '本周',
       },
       'EG': {
         'nowPlaying': 'يعرض الآن',
@@ -138,6 +186,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
         'popular': 'الأكثر شعبية',
         'topRated': 'الأعلى تقييماً',
         'topRatedSubtitle': 'على الإطلاق',
+        'onTheAir': 'يعرض حالياً',
+        'onTheAirSubtitle': 'هذا الأسبوع',
       },
     };
 

@@ -15,6 +15,19 @@ class _PopularViewState extends ConsumerState<PopularView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final mediaType = ref.watch(mediaTypeProvider);
+    if (mediaType == MediaType.tvShows) {
+      final shows = ref.watch(popularTvShowsProvider);
+      if (shows.isEmpty) {
+        return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      }
+      return TvShowMasonry(
+        shows: shows,
+        loadNextPage: () =>
+            ref.read(popularTvShowsProvider.notifier).loadNextPage(),
+      );
+    }
+
     final movies = ref.watch(popularMoviesProvider);
     if (movies.isEmpty) {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));

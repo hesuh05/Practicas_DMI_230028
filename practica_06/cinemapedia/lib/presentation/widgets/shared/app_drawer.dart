@@ -1,5 +1,6 @@
 import 'package:cinemapedia/config/language/app_language.dart';
 import 'package:cinemapedia/presentation/providers/settings/language_provider.dart';
+import 'package:cinemapedia/presentation/widgets/shared/media_type_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,6 +25,15 @@ class AppDrawer extends ConsumerWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Text(
+                _mediaTypeLabel(language),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const MediaTypeSelector(),
+            const Divider(height: 8),
             ListTile(
               leading: const Icon(Icons.settings_outlined),
               title: Text(_settingsLabel(language)),
@@ -40,6 +50,21 @@ class AppDrawer extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _mediaTypeLabel(AppLanguage language) {
+    switch (language.code) {
+      case 'US':
+        return 'Content';
+      case 'DE':
+        return 'Inhalt';
+      case 'CN':
+        return '内容';
+      case 'EG':
+        return 'المحتوى';
+      default:
+        return 'Contenido';
+    }
   }
 
   String _settingsLabel(AppLanguage language) {
@@ -79,7 +104,13 @@ class _LanguageSettingsSheet extends ConsumerWidget {
               (language) => RadioListTile<String>(
                 value: language.code,
                 groupValue: selected.code,
-                title: Text('${language.name} (${language.code})'),
+                title: Row(
+                  children: [
+                    Text(language.flag, style: const TextStyle(fontSize: 22)),
+                    const SizedBox(width: 12),
+                    Text('${language.name} (${language.code})'),
+                  ],
+                ),
                 onChanged: (_) async {
                   try {
                     await ref

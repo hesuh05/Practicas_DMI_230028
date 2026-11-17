@@ -2,12 +2,18 @@ import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/domain/repositories/local_storage_repository.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final favoriteMovieStatusProvider =
+    FutureProvider.family.autoDispose<bool, int>((ref, movieId) {
+  return ref.watch(localStorageRepositoryProvider).isMovieFavorite(movieId);
+});
 
 final favoriteMoviesProvider =
     StateNotifierProvider<StorageMoviesNotifier, Map<int, Movie>>((ref) {
-  final repository = ref.watch(localStorageRepositoryProvider);
-  return StorageMoviesNotifier(localStorageRepository: repository);
-});
+      final repository = ref.watch(localStorageRepositoryProvider);
+      return StorageMoviesNotifier(localStorageRepository: repository);
+    });
 
 class StorageMoviesNotifier extends StateNotifier<Map<int, Movie>> {
   StorageMoviesNotifier({required this.localStorageRepository}) : super({});
@@ -21,10 +27,7 @@ class StorageMoviesNotifier extends StateNotifier<Map<int, Movie>> {
       limit: 20,
     );
     page++;
-    state = {
-      ...state,
-      for (final movie in movies) movie.id: movie,
-    };
+    state = {...state, for (final movie in movies) movie.id: movie};
     return movies;
   }
 

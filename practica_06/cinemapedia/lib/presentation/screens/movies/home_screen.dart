@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 import 'package:cinemapedia/presentation/views/views.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static const name = 'home-screen';
 
   final int pageIndex;
@@ -10,10 +12,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.pageIndex});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
+class _HomeScreenState extends ConsumerState<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   late final PageController pageController;
 
@@ -51,6 +53,8 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
     final appDirection = Directionality.of(context);
+    final isInitialLoading =
+        widget.pageIndex == 0 && ref.watch(initialLoadingProvider);
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -67,10 +71,12 @@ class _HomeScreenState extends State<HomeScreen>
             children: viewRoutes,
           ),
         ),
-        bottomNavigationBar: Directionality(
-          textDirection: appDirection,
-          child: CustomBottomNavigation(currentIndex: widget.pageIndex),
-        ),
+        bottomNavigationBar: isInitialLoading
+            ? null
+            : Directionality(
+                textDirection: appDirection,
+                child: CustomBottomNavigation(currentIndex: widget.pageIndex),
+              ),
       ),
     );
   }

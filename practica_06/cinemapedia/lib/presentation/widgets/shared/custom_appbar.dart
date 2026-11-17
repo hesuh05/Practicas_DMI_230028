@@ -16,6 +16,7 @@ class CustomAppbar extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
     final titleStyle = Theme.of(context).textTheme.titleMedium;
     final language = ref.watch(languageProvider);
+    final mediaType = ref.watch(mediaTypeProvider);
 
     return SafeArea(
       bottom: false,
@@ -28,6 +29,17 @@ class CustomAppbar extends ConsumerWidget {
               Icon(Icons.movie_outlined, color: colors.primary),
               const SizedBox(width: 5),
               Text('Cinemapedia', style: titleStyle),
+              const SizedBox(width: 8),
+              Chip(
+                visualDensity: VisualDensity.compact,
+                label: Text(_mediaTypeLabel(language.code, mediaType)),
+                avatar: Icon(
+                  mediaType == MediaType.movies
+                      ? Icons.movie_outlined
+                      : Icons.tv_outlined,
+                  size: 16,
+                ),
+              ),
 
               const Spacer(),
 
@@ -47,7 +59,7 @@ class CustomAppbar extends ConsumerWidget {
                           .searchMoviesByQuery,
                     ),
                   ).then((movie) {
-                    if (movie == null) return;
+                    if (movie == null || !context.mounted) return;
 
                     context.push('/home/0/movie/${movie.id}');
                   });
@@ -74,5 +86,17 @@ class CustomAppbar extends ConsumerWidget {
       default:
         return 'Buscar películas';
     }
+  }
+
+  String _mediaTypeLabel(String language, MediaType mediaType) {
+    const labels = {
+      'MX': {'movies': 'Películas', 'series': 'Series'},
+      'US': {'movies': 'Movies', 'series': 'Series'},
+      'DE': {'movies': 'Filme', 'series': 'Serien'},
+      'CN': {'movies': '电影', 'series': '剧集'},
+      'EG': {'movies': 'أفلام', 'series': 'مسلسلات'},
+    };
+    final key = mediaType == MediaType.movies ? 'movies' : 'series';
+    return labels[language]?[key] ?? labels['MX']![key]!;
   }
 }

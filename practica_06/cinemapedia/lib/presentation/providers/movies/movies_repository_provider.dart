@@ -7,9 +7,6 @@ import 'package:cinemapedia/presentation/providers/settings/language_provider.da
 final movieRepositoryProvider = Provider((ref) {
   final language = ref.watch(languageProvider);
   return MovieRepositoryImpl(
-    MoviedbDatasource(
-      language: language.tmdbLanguage,
-      region: language.region,
-    ),
+    MoviedbDatasource(language: language.tmdbLanguage, region: language.region),
   );
 });

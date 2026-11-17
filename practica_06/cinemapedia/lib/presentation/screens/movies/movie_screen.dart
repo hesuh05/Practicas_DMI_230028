@@ -166,75 +166,79 @@ class _CustomSliverAppBar extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     final isFavorite = ref.watch(isFavoriteProvider(movie.id));
 
-    return SliverAppBar(
-      backgroundColor: Colors.black,
-      expandedHeight: size.height * 0.7,
-      foregroundColor: Colors.white,
-      actions: [
-        IconButton(
-          onPressed: () async {
-            await ref
-                .read(favoriteMoviesProvider.notifier)
-                .toggleFavorite(movie);
-            ref.invalidate(isFavoriteProvider(movie.id));
-          },
-          icon: isFavorite.when(
-            loading: () => const CircularProgressIndicator(strokeWidth: 2),
-            data: (favorite) => Icon(
-              favorite ? Icons.favorite_rounded : Icons.favorite_border,
-              color: favorite ? Colors.red : null,
-            ),
-            error: (error, stackTrace) {
-              return const Icon(Icons.error_outline);
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: SliverAppBar(
+        backgroundColor: Colors.black,
+        expandedHeight: size.height * 0.7,
+        foregroundColor: Colors.white,
+        leading: const BackButton(),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await ref
+                  .read(favoriteMoviesProvider.notifier)
+                  .toggleFavorite(movie);
+              ref.invalidate(isFavoriteProvider(movie.id));
             },
+            icon: isFavorite.when(
+              loading: () => const CircularProgressIndicator(strokeWidth: 2),
+              data: (favorite) => Icon(
+                favorite ? Icons.favorite_rounded : Icons.favorite_border,
+                color: favorite ? Colors.red : null,
+              ),
+              error: (error, stackTrace) {
+                return const Icon(Icons.error_outline);
+              },
+            ),
           ),
-        ),
-      ],
-      flexibleSpace: FlexibleSpaceBar(
-        titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        // title: Text(
-        //   movie.title,
-        //   style: const TextStyle(fontSize: 20),
-        //   textAlign: TextAlign.start,
-        // ),
-        background: Stack(
-          children: [
-            SizedBox.expand(
-              child: Image.network(
-                movie.posterPath,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress != null) return const SizedBox();
-                  return FadeIn(child: child);
-                },
+        ],
+        flexibleSpace: FlexibleSpaceBar(
+          titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          // title: Text(
+          //   movie.title,
+          //   style: const TextStyle(fontSize: 20),
+          //   textAlign: TextAlign.start,
+          // ),
+          background: Stack(
+            children: [
+              SizedBox.expand(
+                child: Image.network(
+                  movie.posterPath,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress != null) return const SizedBox();
+                    return FadeIn(child: child);
+                  },
+                ),
               ),
-            ),
 
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.7, 1.0],
-                    colors: [Colors.transparent, Colors.black87],
+              const SizedBox.expand(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.7, 1.0],
+                      colors: [Colors.transparent, Colors.black87],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    stops: [0.0, 0.3],
-                    colors: [Colors.black87, Colors.transparent],
+              const SizedBox.expand(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      stops: [0.0, 0.3],
+                      colors: [Colors.black87, Colors.transparent],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

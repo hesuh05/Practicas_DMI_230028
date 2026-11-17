@@ -22,7 +22,8 @@ class VideosFromMovie extends ConsumerWidget {
           ? const SizedBox.shrink()
           : _VideoPlayer(video: items.first),
       error: (_, _) => const SizedBox.shrink(),
-      loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      loading: () =>
+          const Center(child: CircularProgressIndicator(strokeWidth: 2)),
     );
   }
 }
