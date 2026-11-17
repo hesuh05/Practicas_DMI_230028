@@ -10,9 +10,9 @@ class MoviedbVideosResponse {
       id: json['id'] as int,
       results: results is List
           ? results
-              .whereType<Map<String, dynamic>>()
-              .map(MoviedbVideoResult.fromJson)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(MoviedbVideoResult.fromJson)
+                .toList()
           : const [],
     );
   }

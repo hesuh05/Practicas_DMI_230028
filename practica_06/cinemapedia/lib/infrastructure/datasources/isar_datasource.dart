@@ -1,5 +1,6 @@
 import 'package:cinemapedia/domain/datasources/local_storage_datasource.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/tv_show.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,7 +17,7 @@ class IsarDatasource extends LocalStorageDatasource {
     }
 
     final directory = await getApplicationDocumentsDirectory();
-    return Isar.open([MovieSchema], directory: directory.path);
+    return Isar.open([MovieSchema, TvShowSchema], directory: directory.path);
   }
 
   @override
@@ -47,5 +48,30 @@ class IsarDatasource extends LocalStorageDatasource {
   Future<List<Movie>> loadMovies({int limit = 10, int offset = 0}) async {
     final isar = await db;
     return isar.movies.where().offset(offset).limit(limit).findAll();
+  }
+
+  @override
+  Future<bool> isTvShowFavorite(int showId) async {
+    final isar = await db;
+    return await isar.tvShows.filter().idEqualTo(showId).findFirst() != null;
+  }
+
+  @override
+  Future<void> toggleFavoriteTvShow(TvShow show) async {
+    final isar = await db;
+    final favorite = await isar.tvShows.filter().idEqualTo(show.id).findFirst();
+    await isar.writeTxn(() async {
+      if (favorite != null) {
+        await isar.tvShows.delete(favorite.isarId!);
+      } else {
+        await isar.tvShows.put(show);
+      }
+    });
+  }
+
+  @override
+  Future<List<TvShow>> loadTvShows({int limit = 10, int offset = 0}) async {
+    final isar = await db;
+    return isar.tvShows.where().offset(offset).limit(limit).findAll();
   }
 }
