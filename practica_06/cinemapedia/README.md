@@ -138,6 +138,18 @@ flutter test
 | <img src="../proof/favoritos.png" alt="Favoritos Películas" width="240"/> | <img src="../proof/favoritos_series.png" alt="Favoritos Series" width="240"/> |
 | Listado de películas guardadas localmente por el usuario. | Sección dedicada a las series almacenadas en favoritos. |
 
+### Detalles y clasificación
+
+| Detalle de película | Detalle de serie |
+| :---: | :---: |
+| <img src="../proof/detalles_pelicula.png" alt="Detalle de película" width="240"/> | <img src="../proof/detalles_serie.png" alt="Detalle de serie" width="240"/> |
+| Sinopsis, géneros, clasificación y reparto de una película. | Información, temporadas y reparto de una serie. |
+
+| Clasificación de edad | Clasificación desde el inicio |
+| :---: | :---: |
+| <img src="../proof/clasificacion_edad_pelicula.png" alt="Clasificación de edad de película" width="240"/> | <img src="../proof/inicio_clasificacion_edad.png" alt="Clasificación de edad en pantalla principal" width="240"/> |
+| Clasificación de edad mostrada en el detalle de la película. | Clasificación de edad visible desde la pantalla principal. |
+
 ### Localización e idiomas (TMDB)
 
 | Inglés (en-US) | Alemán (de-DE) |

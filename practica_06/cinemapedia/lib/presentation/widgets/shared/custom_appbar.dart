@@ -29,17 +29,22 @@ class CustomAppbar extends ConsumerWidget {
             children: [
               Icon(Icons.movie_outlined, color: colors.primary),
               const SizedBox(width: 5),
-              Text('Cinemapedia', style: titleStyle),
-              const SizedBox(width: 4),
-              Text(
-                '230028',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
+              PopupMenuButton<String>(
+                tooltip: 'Ver matrícula',
+                padding: EdgeInsets.zero,
+                itemBuilder: (context) => const [
+                  PopupMenuItem<String>(
+                    value: '230028',
+                    child: Text('Matrícula: 230028'),
+                  ),
+                ],
+                child: Text('Cinemapedia', style: titleStyle),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               Chip(
                 visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                 label: Text(_mediaTypeLabel(language.code, mediaType)),
                 avatar: Icon(
                   mediaType == MediaType.movies
@@ -48,7 +53,6 @@ class CustomAppbar extends ConsumerWidget {
                   size: 16,
                 ),
               ),
-
               const Spacer(),
 
               IconButton(
