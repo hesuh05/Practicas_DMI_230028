@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cinemapedia/presentation/providers/media_type_provider.dart';
+import 'package:cinemapedia/presentation/providers/search/search_movies_provider.dart';
 import 'package:cinemapedia/presentation/providers/settings/language_provider.dart';
 
 class MediaTypeSelector extends ConsumerWidget {
@@ -29,6 +30,7 @@ class MediaTypeSelector extends ConsumerWidget {
         selected: {selected},
         onSelectionChanged: (selection) {
           ref.read(mediaTypeProvider.notifier).state = selection.first;
+          ref.read(searchQueryProvider.notifier).state = '';
         },
       ),
     );

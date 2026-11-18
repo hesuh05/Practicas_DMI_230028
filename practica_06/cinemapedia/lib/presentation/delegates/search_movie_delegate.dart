@@ -3,64 +3,87 @@ import 'dart:async';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:cinemapedia/domain/entities/movie.dart';
 
-typedef SearchMoviesCallback = Future<List<Movie>> Function(String query);
+typedef SearchMediaCallback<T> = Future<List<T>> Function(String query);
 
-class SearchMovieDelegate extends SearchDelegate<Movie?> {
-  final SearchMoviesCallback searchMovies;
-  List<Movie> initialMovies;
+class SearchMediaDelegate<T> extends SearchDelegate<T?> {
+  SearchMediaDelegate({
+    required this.searchMedia,
+    required this.initialItems,
+    required this.titleOf,
+    required this.posterOf,
+    required this.overviewOf,
+    required this.voteAverageOf,
+    required String searchFieldLabel,
+  }) : super(searchFieldLabel: searchFieldLabel);
 
-  StreamController<List<Movie>> debouncedMovies = StreamController.broadcast();
-  StreamController<bool> isLoadingStream = StreamController.broadcast();
+  final SearchMediaCallback<T> searchMedia;
+  final String Function(T item) titleOf;
+  final String Function(T item) posterOf;
+  final String Function(T item) overviewOf;
+  final double Function(T item) voteAverageOf;
+  List<T> initialItems;
+
+  final StreamController<List<T>> debouncedItems =
+      StreamController<List<T>>.broadcast();
+  final StreamController<bool> isLoadingStream =
+      StreamController<bool>.broadcast();
 
   Timer? _debounceTimer;
 
-  SearchMovieDelegate({
-    required this.searchMovies,
-    required this.initialMovies,
-    required String searchFieldLabel,
-  }) : super(
-         searchFieldLabel: searchFieldLabel,
-         // textInputAction: TextInputAction.done
-       );
-
   void clearStreams() {
-    debouncedMovies.close();
+    _debounceTimer?.cancel();
+    if (!debouncedItems.isClosed) debouncedItems.close();
+    if (!isLoadingStream.isClosed) isLoadingStream.close();
   }
 
   void _onQueryChanged(String query) {
+    if (query.trim().isEmpty) {
+      _debounceTimer?.cancel();
+      initialItems = [];
+      if (!debouncedItems.isClosed) debouncedItems.add([]);
+      if (!isLoadingStream.isClosed) isLoadingStream.add(false);
+      return;
+    }
+
     isLoadingStream.add(true);
-
-    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
-
+    _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
-      // if ( query.isEmpty ) {
-      //   debouncedMovies.add([]);
-      //   return;
-      // }
-
-      final movies = await searchMovies(query);
-      initialMovies = movies;
-      debouncedMovies.add(movies);
-      isLoadingStream.add(false);
+      try {
+        final items = await searchMedia(query);
+        initialItems = items;
+        if (!debouncedItems.isClosed) debouncedItems.add(items);
+      } catch (error, stackTrace) {
+        if (!debouncedItems.isClosed) {
+          debouncedItems.addError(error, stackTrace);
+        }
+      } finally {
+        if (!isLoadingStream.isClosed) isLoadingStream.add(false);
+      }
     });
   }
 
-  Widget buildResultsAndSuggestions() {
-    return StreamBuilder(
-      initialData: initialMovies,
-      stream: debouncedMovies.stream,
+  Widget _buildResultsAndSuggestions() {
+    return StreamBuilder<List<T>>(
+      initialData: initialItems,
+      stream: debouncedItems.stream,
       builder: (context, snapshot) {
-        final movies = snapshot.data ?? [];
+        if (snapshot.hasError) {
+          return Center(child: Text('Error al buscar: ${snapshot.error}'));
+        }
 
+        final items = snapshot.data ?? [];
         return ListView.builder(
-          itemCount: movies.length,
-          itemBuilder: (context, index) => _MovieItem(
-            movie: movies[index],
-            onMovieSelected: (context, movie) {
+          itemCount: items.length,
+          itemBuilder: (context, index) => _MediaItem<T>(
+            item: items[index],
+            titleOf: titleOf,
+            posterOf: posterOf,
+            overviewOf: overviewOf,
+            voteAverageOf: voteAverageOf,
+            onSelected: (item) {
               clearStreams();
-              close(context, movie);
+              close(context, item);
             },
           ),
         );
@@ -68,83 +91,83 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
     );
   }
 
-  // @override
-  // String get searchFieldLabel => 'Buscar película';
-
   @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      StreamBuilder(
-        initialData: false,
-        stream: isLoadingStream.stream,
-        builder: (context, snapshot) {
-          if (snapshot.data ?? false) {
-            return SpinPerfect(
-              duration: const Duration(seconds: 20),
-              spins: 10,
-              infinite: true,
-              child: IconButton(
-                onPressed: () => query = '',
-                icon: const Icon(Icons.refresh_rounded),
-              ),
-            );
-          }
-
-          return FadeIn(
-            animate: query.isNotEmpty,
+  List<Widget>? buildActions(BuildContext context) => [
+    StreamBuilder<bool>(
+      initialData: false,
+      stream: isLoadingStream.stream,
+      builder: (context, snapshot) {
+        if (snapshot.data ?? false) {
+          return SpinPerfect(
+            duration: const Duration(seconds: 20),
+            spins: 10,
+            infinite: true,
             child: IconButton(
               onPressed: () => query = '',
-              icon: const Icon(Icons.clear),
+              icon: const Icon(Icons.refresh_rounded),
             ),
           );
-        },
-      ),
-    ];
-  }
+        }
 
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        clearStreams();
-        close(context, null);
+        return FadeIn(
+          animate: query.isNotEmpty,
+          child: IconButton(
+            onPressed: () => query = '',
+            icon: const Icon(Icons.clear),
+          ),
+        );
       },
-      icon: const Icon(Icons.arrow_back_ios_new_rounded),
-    );
-  }
+    ),
+  ];
 
   @override
-  Widget buildResults(BuildContext context) {
-    return buildResultsAndSuggestions();
-  }
+  Widget? buildLeading(BuildContext context) => IconButton(
+    onPressed: () {
+      clearStreams();
+      close(context, null);
+    },
+    icon: const Icon(Icons.arrow_back_ios_new_rounded),
+  );
+
+  @override
+  Widget buildResults(BuildContext context) => _buildResultsAndSuggestions();
 
   @override
   Widget buildSuggestions(BuildContext context) {
     _onQueryChanged(query);
-    return buildResultsAndSuggestions();
+    return _buildResultsAndSuggestions();
   }
 }
 
-class _MovieItem extends StatelessWidget {
-  final Movie movie;
-  final Function onMovieSelected;
+class _MediaItem<T> extends StatelessWidget {
+  const _MediaItem({
+    required this.item,
+    required this.titleOf,
+    required this.posterOf,
+    required this.overviewOf,
+    required this.voteAverageOf,
+    required this.onSelected,
+  });
 
-  const _MovieItem({required this.movie, required this.onMovieSelected});
+  final T item;
+  final String Function(T item) titleOf;
+  final String Function(T item) posterOf;
+  final String Function(T item) overviewOf;
+  final double Function(T item) voteAverageOf;
+  final ValueChanged<T> onSelected;
 
   @override
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).textTheme;
     final size = MediaQuery.of(context).size;
+    final overview = overviewOf(item);
 
     return GestureDetector(
-      onTap: () {
-        onMovieSelected(context, movie);
-      },
+      onTap: () => onSelected(item),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Row(
           children: [
-            // Image
             SizedBox(
               width: size.width * 0.2,
               child: ClipRRect(
@@ -153,25 +176,22 @@ class _MovieItem extends StatelessWidget {
                   placeholder: const AssetImage(
                     'assets/loaders/wedge-loader.gif',
                   ),
-                  image: NetworkImage(movie.posterPath),
+                  image: NetworkImage(posterOf(item)),
                 ),
               ),
             ),
-
             const SizedBox(width: 10),
-
-            // Description
             SizedBox(
               width: size.width * 0.7,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(movie.title, style: textStyles.titleMedium),
-
-                  (movie.overview.length > 100)
-                      ? Text('${movie.overview.substring(0, 100)}...')
-                      : Text(movie.overview),
-
+                  Text(titleOf(item), style: textStyles.titleMedium),
+                  Text(
+                    overview.length > 100
+                        ? '${overview.substring(0, 100)}...'
+                        : overview,
+                  ),
                   Row(
                     children: [
                       Icon(
@@ -180,7 +200,7 @@ class _MovieItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        HumanFormats.number(movie.voteAverage, 1),
+                        HumanFormats.number(voteAverageOf(item), 1),
                         style: textStyles.bodyMedium!.copyWith(
                           color: Colors.yellow.shade900,
                         ),

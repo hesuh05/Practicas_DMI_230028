@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:cinemapedia/domain/entities/media_certification.dart';
 
 part 'tv_show.g.dart';
 
@@ -50,6 +51,8 @@ class TvShow {
   final int numberOfSeasons;
   final int numberOfEpisodes;
   @ignore
+  final MediaCertification certification;
+  @ignore
   List<TvSeason> seasons = const [];
 
   TvShow({
@@ -64,5 +67,6 @@ class TvShow {
     required this.voteCount,
     required this.numberOfSeasons,
     required this.numberOfEpisodes,
+    this.certification = const MediaCertification.empty(requestedRegion: ''),
   });
 }

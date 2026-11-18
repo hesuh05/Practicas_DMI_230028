@@ -12,6 +12,8 @@ export 'tv_shows/tv_shows_repository_provider.dart';
 export 'tv_shows/tv_show_episodes_provider.dart';
 
 export 'search/search_movies_provider.dart';
+export 'search/search_tv_shows_provider.dart';
+export 'certification_meaning_provider.dart';
 export 'settings/language_provider.dart';
 export 'storage/favorite_movies_provider.dart';
 export 'storage/favorite_tv_shows_provider.dart';

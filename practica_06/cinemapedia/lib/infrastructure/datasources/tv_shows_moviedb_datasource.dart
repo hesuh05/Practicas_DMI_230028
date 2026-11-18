@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 
 import 'package:cinemapedia/config/constants/environment.dart';
 import 'package:cinemapedia/domain/datasources/tv_shows_datasource.dart';
+import 'package:cinemapedia/domain/entities/media_certification.dart';
 import 'package:cinemapedia/domain/entities/tv_show.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/tv_show_moviedb.dart';
+import 'package:cinemapedia/infrastructure/mappers/certification_mapper.dart';
 
 class TvShowsMoviedbDatasource extends TvShowsDatasource {
   final String language;
@@ -77,23 +79,18 @@ class TvShowsMoviedbDatasource extends TvShowsDatasource {
   }
 
   @override
-  Future<List<TvShow>> getPopular({int page = 1}) => _discoverShows(
-        page: page,
-        baseParams: {'sort_by': 'popularity.desc'},
-      );
+  Future<List<TvShow>> getPopular({int page = 1}) =>
+      _discoverShows(page: page, baseParams: {'sort_by': 'popularity.desc'});
 
   @override
   Future<List<TvShow>> getTopRated({int page = 1}) => _discoverShows(
-        page: page,
-        baseParams: {
-          'sort_by': 'vote_average.desc',
-          'vote_count.gte': 200,
-        },
-        originFallbackParams: {
-          'sort_by': 'vote_average.desc',
-          'vote_count.gte': 20,
-        },
-      );
+    page: page,
+    baseParams: {'sort_by': 'vote_average.desc', 'vote_count.gte': 200},
+    originFallbackParams: {
+      'sort_by': 'vote_average.desc',
+      'vote_count.gte': 20,
+    },
+  );
 
   @override
   Future<List<TvShow>> getOnTheAir({int page = 1}) {
@@ -112,11 +109,55 @@ class TvShowsMoviedbDatasource extends TvShowsDatasource {
 
   @override
   Future<TvShow> getById(String id) async {
-    final response = await dio.get(
-      '/tv/$id',
-      queryParameters: {'language': language, 'append_to_response': 'videos'},
+    final responses = await Future.wait([
+      dio.get(
+        '/tv/$id',
+        queryParameters: {
+          'language': language,
+          'append_to_response': 'videos',
+        },
+      ),
+      dio.get('/tv/$id/content_ratings'),
+    ]);
+    final details = Map<String, dynamic>.from(responses.first.data)
+      ..['content_ratings'] = responses.last.data;
+    return TvShowMapper.fromJson(
+      details,
+      region: region,
     );
-    return TvShowMapper.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MediaCertification> getCertificationById(int tvShowId) async {
+    final response = await dio.get('/tv/$tvShowId/content_ratings');
+    return TvShowMapper.certificationForRegion(response.data, region);
+  }
+
+  @override
+  Future<String?> getCertificationMeaning(
+    String certification, {
+    required String region,
+  }) async {
+    final response = await dio.get(
+      '/certification/tv/list',
+      queryParameters: {'language': language},
+    );
+    return CertificationMapper.meaningForRegion(
+      response.data,
+      region: region,
+      certification: certification,
+    );
+  }
+
+  @override
+  Future<List<TvShow>> search(String query) async {
+    if (query.trim().isEmpty) return [];
+
+    final response = await dio.get(
+      '/search/tv',
+      queryParameters: {'query': query, 'language': language, 'region': region},
+    );
+    return _parseShows(response.data);
   }
 
   @override

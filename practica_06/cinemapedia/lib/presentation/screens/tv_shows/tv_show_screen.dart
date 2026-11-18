@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 
 import 'package:cinemapedia/domain/entities/tv_show.dart';
+import 'package:cinemapedia/config/helpers/certification_meaning.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
@@ -78,6 +79,21 @@ class _TvShowDetails extends StatelessWidget {
         children: [
           Text(show.name, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 8),
+          Row(
+            children: [
+              MovieRating(voteAverage: show.voteAverage),
+              if (show.certification.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                CertificationBadge(certification: show.certification.label),
+              ],
+            ],
+          ),
+          if (show.certification.isNotEmpty)
+            CertificationMeaningText(
+              certification: show.certification,
+              media: CertificationMedia.tv,
+            ),
+          const SizedBox(height: 8),
           Text(
             '${show.numberOfSeasons} temporadas · '
             '${show.numberOfEpisodes} episodios',
@@ -88,8 +104,6 @@ class _TvShowDetails extends StatelessWidget {
                 ? 'Sin descripción disponible.'
                 : show.overview,
           ),
-          const SizedBox(height: 16),
-          Text('Calificación: ${show.voteAverage.toStringAsFixed(1)}'),
           const SizedBox(height: 24),
           ActorsByTvShow(tvShowId: tvShowId),
           const SizedBox(height: 24),

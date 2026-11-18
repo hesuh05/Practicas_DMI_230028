@@ -1,4 +1,5 @@
 import 'package:cinemapedia/domain/datasources/tv_shows_datasource.dart';
+import 'package:cinemapedia/domain/entities/media_certification.dart';
 import 'package:cinemapedia/domain/entities/tv_show.dart';
 import 'package:cinemapedia/domain/repositories/tv_shows_repository.dart';
 
@@ -21,6 +22,19 @@ class TvShowsRepositoryImpl extends TvShowsRepository {
 
   @override
   Future<TvShow> getById(String id) => datasource.getById(id);
+
+  @override
+  Future<MediaCertification> getCertificationById(int tvShowId) =>
+      datasource.getCertificationById(tvShowId);
+
+  @override
+  Future<String?> getCertificationMeaning(
+    String certification, {
+    required String region,
+  }) => datasource.getCertificationMeaning(certification, region: region);
+
+  @override
+  Future<List<TvShow>> search(String query) => datasource.search(query);
 
   @override
   Future<List<TvEpisode>> getEpisodes(String tvShowId, int seasonNumber) =>

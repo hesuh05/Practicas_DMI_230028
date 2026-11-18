@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/config/helpers/certification_meaning.dart';
 
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
@@ -30,6 +31,9 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(languageProvider, (_, _) {
+      ref.read(movieInfoProvider.notifier).loadMovie(widget.movieId);
+    });
     final Movie? movie = ref.watch(movieInfoProvider)[widget.movieId];
 
     if (movie == null) {
@@ -88,11 +92,24 @@ class _MovieDetails extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(movie.title, style: textStyles.titleLarge),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        MovieRating(voteAverage: movie.voteAverage),
+                        if (movie.certification.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          CertificationBadge(
+                            certification: movie.certification.label,
+                          ),
+                        ],
+                      ],
+                    ),
                     if (movie.certification.isNotEmpty)
-                      Text(
-                        '${_certificationLabel(Localizations.localeOf(context).languageCode)}: ${movie.certification}',
-                        style: textStyles.bodyMedium,
+                      CertificationMeaningText(
+                        certification: movie.certification,
+                        media: CertificationMedia.movie,
                       ),
+                    const SizedBox(height: 8),
                     Text(movie.overview),
                   ],
                 ),
@@ -123,28 +140,12 @@ class _MovieDetails extends StatelessWidget {
 
         ActorsByMovie(movieId: movie.id.toString()),
 
-        MovieRating(voteAverage: movie.voteAverage),
         VideosFromMovie(movieId: movie.id),
         SimilarMovies(movieId: movie.id),
 
         const SizedBox(height: 50),
       ],
     );
-  }
-
-  String _certificationLabel(String languageCode) {
-    switch (languageCode) {
-      case 'en':
-        return 'Rating';
-      case 'de':
-        return 'Freigabe';
-      case 'zh':
-        return '分级';
-      case 'ar':
-        return 'التصنيف';
-      default:
-        return 'Clasificación';
-    }
   }
 }
 

@@ -1,3 +1,5 @@
+import 'package:cinemapedia/domain/entities/media_certification.dart';
+
 class MovieDetails {
   MovieDetails({
     required this.adult,
@@ -53,7 +55,7 @@ class MovieDetails {
   final bool video;
   final double voteAverage;
   final int voteCount;
-  final String certification;
+  final MediaCertification certification;
 
   factory MovieDetails.fromJson(
     Map<String, dynamic> json, {
@@ -92,34 +94,68 @@ class MovieDetails {
     video: json["video"],
     voteAverage: json["vote_average"]?.toDouble(),
     voteCount: json["vote_count"],
-    certification: _certificationForRegion(json["release_dates"], region),
+    certification: certificationForRegion(json["release_dates"], region),
   );
 
-  static String _certificationForRegion(dynamic releaseDates, String region) {
-    if (releaseDates is! Map<String, dynamic>) return '';
-
-    final results = releaseDates["results"];
-    if (results is! List) return '';
-
-    Map<String, dynamic>? fallback;
-    for (final item in results) {
-      if (item is! Map<String, dynamic>) continue;
-      final dates = item["release_dates"];
-      if (dates is! List || dates.isEmpty) continue;
-
-      if (item["iso_3166_1"] == region) {
-        final first = dates.first;
-        if (first is Map<String, dynamic>) {
-          return first["certification"]?.toString() ?? '';
-        }
-      }
-
-      if (fallback == null && dates.first is Map<String, dynamic>) {
-        fallback = dates.first as Map<String, dynamic>;
-      }
+  static MediaCertification certificationForRegion(
+    dynamic releaseDates,
+    String region,
+  ) {
+    if (releaseDates is! Map<String, dynamic>) {
+      return MediaCertification.empty(requestedRegion: region);
     }
 
-    return fallback?["certification"]?.toString() ?? '';
+    final results = releaseDates["results"];
+    if (results is! List) {
+      return MediaCertification.empty(requestedRegion: region);
+    }
+
+    MediaCertification? usFallback;
+    MediaCertification? firstFallback;
+    for (final item in results) {
+      if (item is! Map<String, dynamic>) continue;
+      final candidate = _certificationFromCountry(item, region);
+      if (candidate == null) continue;
+      if (candidate.region == region) return candidate;
+      if (candidate.region == 'US') usFallback ??= candidate;
+      firstFallback ??= candidate;
+    }
+
+    return usFallback ??
+        firstFallback ??
+        MediaCertification.empty(requestedRegion: region);
+  }
+
+  static MediaCertification? _certificationFromCountry(
+    Map<String, dynamic> item,
+    String requestedRegion,
+  ) {
+    final region = item["iso_3166_1"]?.toString() ?? '';
+    final dates = item["release_dates"];
+    if (region.isEmpty || dates is! List || dates.isEmpty) return null;
+
+    String? fallback;
+    for (final date in dates) {
+      if (date is! Map<String, dynamic>) continue;
+      final code = date["certification"]?.toString().trim() ?? '';
+      if (code.isEmpty) continue;
+      if (date["type"] == 3) {
+        return MediaCertification(
+          code: code,
+          region: region,
+          requestedRegion: requestedRegion,
+        );
+      }
+      fallback ??= code;
+    }
+
+    return fallback == null
+        ? null
+        : MediaCertification(
+            code: fallback,
+            region: region,
+            requestedRegion: requestedRegion,
+          );
   }
 
   Map<String, dynamic> toJson() => {

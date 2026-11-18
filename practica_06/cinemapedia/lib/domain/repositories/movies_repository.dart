@@ -11,6 +11,13 @@ abstract class MoviesRepository {
 
   Future<Movie> getMovieById(String id);
 
+  Future<MediaCertification> getCertificationById(int movieId);
+
+  Future<String?> getCertificationMeaning(
+    String certification, {
+    required String region,
+  });
+
   Future<List<Movie>> searchMovies(String query);
 
   Future<List<Movie>> getSimilarMovies(int movieId);

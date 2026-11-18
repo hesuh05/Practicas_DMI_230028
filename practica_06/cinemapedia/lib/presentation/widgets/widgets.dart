@@ -13,6 +13,8 @@ export 'movies/movie_rating.dart';
 export 'movies/similar_movies.dart';
 export 'shared/media_type_selector.dart';
 export 'shared/media_slideshow.dart';
+export 'shared/certification_badge.dart';
+export 'shared/certification_meaning_text.dart';
 export 'tv_shows/tv_show_seasons.dart';
 export 'tv_shows/tv_show_masonry.dart';
 export 'tv_shows/tv_shows_slideshow.dart';

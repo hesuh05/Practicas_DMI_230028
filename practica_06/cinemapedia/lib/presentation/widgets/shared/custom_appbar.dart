@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/tv_show.dart';
 import 'package:cinemapedia/config/language/app_language.dart';
 
 import 'package:cinemapedia/presentation/delegates/search_movie_delegate.dart';
@@ -28,10 +29,22 @@ class CustomAppbar extends ConsumerWidget {
             children: [
               Icon(Icons.movie_outlined, color: colors.primary),
               const SizedBox(width: 5),
-              Text('Cinemapedia', style: titleStyle),
-              const SizedBox(width: 8),
+              PopupMenuButton<String>(
+                tooltip: 'Ver matrícula',
+                padding: EdgeInsets.zero,
+                itemBuilder: (context) => const [
+                  PopupMenuItem<String>(
+                    value: '230028',
+                    child: Text('Matrícula: 230028'),
+                  ),
+                ],
+                child: Text('Cinemapedia', style: titleStyle),
+              ),
+              const SizedBox(width: 4),
               Chip(
                 visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                 label: Text(_mediaTypeLabel(language.code, mediaType)),
                 avatar: Icon(
                   mediaType == MediaType.movies
@@ -40,29 +53,52 @@ class CustomAppbar extends ConsumerWidget {
                   size: 16,
                 ),
               ),
-
               const Spacer(),
 
               IconButton(
-                onPressed: () {
-                  final searchedMovies = ref.read(searchedMoviesProvider);
+                onPressed: () async {
                   final searchQuery = ref.read(searchQueryProvider);
 
-                  showSearch<Movie?>(
+                  if (mediaType == MediaType.movies) {
+                    final movie = await showSearch<Movie?>(
+                      query: searchQuery,
+                      context: context,
+                      delegate: SearchMediaDelegate<Movie>(
+                        initialItems: ref.read(searchedMoviesProvider),
+                        searchFieldLabel: _searchLabel(language, mediaType),
+                        searchMedia: ref
+                            .read(searchedMoviesProvider.notifier)
+                            .searchMoviesByQuery,
+                        titleOf: (movie) => movie.title,
+                        posterOf: (movie) => movie.posterPath,
+                        overviewOf: (movie) => movie.overview,
+                        voteAverageOf: (movie) => movie.voteAverage,
+                      ),
+                    );
+                    if (movie != null && context.mounted) {
+                      context.push('/home/0/movie/${movie.id}');
+                    }
+                    return;
+                  }
+
+                  final show = await showSearch<TvShow?>(
                     query: searchQuery,
                     context: context,
-                    delegate: SearchMovieDelegate(
-                      initialMovies: searchedMovies,
-                      searchFieldLabel: _searchLabel(language),
-                      searchMovies: ref
-                          .read(searchedMoviesProvider.notifier)
-                          .searchMoviesByQuery,
+                    delegate: SearchMediaDelegate<TvShow>(
+                      initialItems: ref.read(searchedTvShowsProvider),
+                      searchFieldLabel: _searchLabel(language, mediaType),
+                      searchMedia: ref
+                          .read(searchedTvShowsProvider.notifier)
+                          .searchTvShowsByQuery,
+                      titleOf: (show) => show.name,
+                      posterOf: (show) => show.posterPath,
+                      overviewOf: (show) => show.overview,
+                      voteAverageOf: (show) => show.voteAverage,
                     ),
-                  ).then((movie) {
-                    if (movie == null || !context.mounted) return;
-
-                    context.push('/home/0/movie/${movie.id}');
-                  });
+                  );
+                  if (show != null && context.mounted) {
+                    context.push('/home/0/tv-show/${show.id}');
+                  }
                 },
                 icon: const Icon(Icons.search),
               ),
@@ -73,18 +109,19 @@ class CustomAppbar extends ConsumerWidget {
     );
   }
 
-  String _searchLabel(AppLanguage language) {
+  String _searchLabel(AppLanguage language, MediaType mediaType) {
+    final isTvShow = mediaType == MediaType.tvShows;
     switch (language.code) {
       case 'US':
-        return 'Search movies';
+        return isTvShow ? 'Search TV shows' : 'Search movies';
       case 'DE':
-        return 'Filme suchen';
+        return isTvShow ? 'Serien suchen' : 'Filme suchen';
       case 'CN':
-        return '搜索电影';
+        return isTvShow ? '搜索剧集' : '搜索电影';
       case 'EG':
-        return 'ابحث عن أفلام';
+        return isTvShow ? 'ابحث عن مسلسلات' : 'ابحث عن أفلام';
       default:
-        return 'Buscar películas';
+        return isTvShow ? 'Buscar series' : 'Buscar películas';
     }
   }
 
