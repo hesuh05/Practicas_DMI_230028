@@ -184,5 +184,5 @@ el dominio, la infraestructura y la API de TMDB.
 
 ## Demo y Descarga
 
-- **Probar en línea (Appetize.io):** [Ejecutar Cinemapedia en el navegador](https://appetize.io/app/b_sbodpyutlkkagzc4csrcwqqove)
-- **Descargar APK (Android):** [app-release.apk](https://drive.google.com/file/d/1pGtQUdDOQWWrgT88qQLKhP96buTZe6Us/view?usp=sharing)
+- **Probar en línea (Appetize.io):** [Ejecutar Cinemapedia en el navegador](https://appetize.io/app/b_ghqhvyedrras5ffpcjglb3c5kq)
+- **Descargar APK (Android):** [app-release.apk](https://drive.google.com/file/d/1TnhGx4rSVrDVV4JGl40UZgIJscgJCJLA/view?usp=sharing)
